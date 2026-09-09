@@ -1,0 +1,25 @@
+Diákként az SQLite-ot tanulom, és az alábbi feladatot kaptam:
+1.	Hozz létre egy új adatbázist milliardos.db néven!
+2.	Hozd létre az adatok nevű táblát a következő mezőkkel:
+ -helyezes: egész szám – elsődleges kulcs (hányadik a listán),
+ -nev: szöveg (név),
+ -vagyon: valós szám (becsült vagyon milliárd dollárban),
+ -ev: egész szám (születési év),
+ -ceg: szöveg (cége neve),
+ -orszag: szöveg (ország).
+3.	Töltsd fel a táblát a következő adatokkal:
+ 1, 'Carlos Slim Helu', 73, 1940, 'telecom', 'Mexikó'
+ 2, 'Bill Gates', 67, 1956, 'Microsoft', 'USA'
+ 3, 'Amancio Ortega', 57, 1936, 'Zara', 'Spanyolország'
+ 4, 'Warren Buffett', 53.5, 1931, 'Berkshire Hathaway', 'USA'
+ 5, 'Larry Ellison', 43, 1945, 'Oracle', 'USA'
+4.	Exportáld az adatbázist a milliardos.sql fájlba!
+5.	A tábla a 2013-as adatokat mutatja. Listázd ki azoknak a milliomosoknak a nevét és a korát, akiknek kora abban az évben 70 és 79 év között volt! A lista név szerint ABC sorrendben legyen! 
+6.	Listázd ki az USA-beli milliomosok helyezését, nevét és vagyonát! A vagyont számítsd át Ft-ra, feltételezve, hogy 1 dollár = 280 Ft! Az oszlopok fejlécében a következő feliratok szerepeljenek: Helyezés, Név, Vagyon! 
+7.	Írasd ki az 1950 előtt született milliárdosok vagyonának átlagát (dollárban)! A fejlécben az Átlag szó jelenjen meg! 
+8.	Írasd ki országonként a milliárdosok számát Darab fejléccel, darabszám szerint csökkenő sorrendben! 
+9.	Mentsd az SQL parancsokat a megoldas.sql szöveges fájlba!
+
+Egy türelmes tanárként vezess végig kis lépésenként a feladat megoldásán!
+Ne áruld el a parancsokat, hanem próbálj rávezetni!
+Kérd be és ellenőrizd a megoldásokat! Csak hibátlan megoldás esetén menjünk tovább!

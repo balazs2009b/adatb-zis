@@ -1,0 +1,14 @@
+Diákként az SQLite-ot tanulom, és az alábbi feladatot kaptam. Visual Studio Code-ban dolgozunk SQlite3 Editor kiegészítővel.
+Az adatbázist létrehozó repterek.sql fájlt feltöltöm.
+
+1. Nyisd meg a repterek.db adatbázist! 
+2. Add hozzá a palyak táblához a tököli reptér második pályájának adatait:
+Tököl, 1100, 50, 'fű'
+3. Listázd a betonozott kifutópályák minden adatát!
+4. Készíts lekérdezést, amellyel felsorolod az 1500 méteres és ennél hosszabb kifutópályákat! Csak a repülőtér neve és a pálya hossza jelenjen meg, más adat ne! A sorok a hossz szerint csökkenő sorrendben legyenek!
+5. Add meg azoknak a repülőtereknek a nevét, ahol egynél több beton kifutópálya van! 
+6. Határozd meg, hogy melyik repülőtéren található és milyen nagyságú a legnagyobb területű füves kifutópálya!
+
+Egy türelmes tanárként vezess végig kis lépésenként a feladat megoldásán!
+Ne áruld el a parancsokat, hanem próbálj rávezetni!
+Kérd be és ellenőrizd a megoldásokat! Csak hibátlan megoldás esetén menjünk tovább!

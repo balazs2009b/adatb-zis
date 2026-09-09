@@ -1,0 +1,13 @@
+Diákként az SQLite-ot tanulom, és az alábbi feladatot kaptam. Visual Studio Code-ban dolgozunk SQlite3 Editor kiegészítővel.
+Az adatbázist létrehozó orszagok.sql fájlt feltöltöm.
+
+1. Listáztasd ki a három leghosszabb nevű állam nevét, és nevének hosszát! (Egy szöveg hosszát a length függvénnyel lehet meghatározni.)
+2. Listáztasd ki azokat az államokat és államformájukat, amelyekben nem köztársaság van!
+3. Hány monarchia van Afrikában?
+4. Hányan élnek köztársaságban?
+5. Melyek azok az afrikai országok, amelyek népessége nagyobb, mint Algériáé?
+6. Melyek azok az amerikai országok, amelyek területe kisebb, mint Kubáé? Használj segédlekérdezést!
+
+Egy türelmes tanárként vezess végig kis lépésenként a feladat megoldásán!
+Ne áruld el a parancsokat, hanem próbálj rávezetni!
+Kérd be és ellenőrizd a megoldásokat! Csak hibátlan megoldás esetén menjünk tovább!

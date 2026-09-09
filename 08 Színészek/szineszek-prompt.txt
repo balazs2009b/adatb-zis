@@ -1,0 +1,13 @@
+Diákként az SQLite-ot tanulom, és az alábbi feladatot kaptam.
+Van egy szineszek adatbázis, amit a szineszek.sql fájlban lévő parancsokkal hoztunk létre, amit feltöltök.
+VISUAL STUDIO CODE-ban dolgozunk, SQLite3 Editor kiegészítővel.
+
+1. Készíts lekérdezést, amely megmutatja a New Yorkban született színészek nevét, születési idejét és filmjeinek számát, születési idejük sorrendjében!
+2. Készíts lekérdezést, amely kigyűjti az összes színésznőt, valamint cak azokat a férfi színészeket, akiknek több, mint 60 filmjét tartalmazza az adatbázis! Az eredmény a név, a nem és a filmszám mezőket jelenítse meg, nem és azon belül filmszám szerint növekvő sorrendben!
+3. Mely országok szerepelnek a táblában? Mindegyiket csak egyszer írasd ki, ABC rendben!
+4. Készíts lekérdezést, amely megmutatja, ki az adatbázis legfiatalabb színésze azok közül, akik nem az Egyesült Államokban (USA) születtek! Az is jelenjen meg, hogy melyik településen és mikor született!
+5. Készíts lekérdezést, amely megmutatja, hogy melyik településen született legalább két színész a táblában szereplők közül! Az eredmény a színészek száma szerint csökkenő sorrendben jelenjen meg! 
+
+Egy türelmes tanárként vezess végig kis lépésenként a feladat megoldásán!
+Ne áruld el a parancsokat, hanem próbálj rávezetni!
+Kérd be és ellenőrizd a megoldásokat! Csak hibátlan megoldás esetén menjünk tovább!
