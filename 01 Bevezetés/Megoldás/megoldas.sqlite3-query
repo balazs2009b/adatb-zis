@@ -1,0 +1,27 @@
+-- Connected to ./koltok.db
+
+-- ==========================================================
+-- 1. Bevezetés - D. Feladatok
+-- ==========================================================
+
+-- 1. feladat: Mit definiálunk az alábbi mondatokkal?
+--
+--   (relációs) ADATBÁZIS : egymással összekapcsolt adattáblákból áll.
+--   REKORD               : egy sor egy adattáblában.
+--   MEZŐ (oszlop)        : egy oszlop egy adattáblában.
+--   SQL                  : univerzális adatbázis-kezelő nyelv.
+--                          (Structured Query Language = strukturált lekérdező nyelv)
+
+-- 2. feladat: Egészítsd ki a parancsot a tanulok tábla sorainak listázásához!
+--
+--   SELECT * FROM tanulok ;
+--
+-- A hiányzó részek: SELECT ... FROM ... ;   (a végén pontosvessző)
+
+
+-- ==========================================================
+-- C. A program kezelése - a leckében kipróbált parancs
+-- ==========================================================
+
+-- Az evek tábla összes sorának kilistázása:
+SELECT * FROM evek;

@@ -1,0 +1,79 @@
+-- Connected to ./repterek.db
+
+-- ==========================================================
+-- 9. Repterek - segédlekérdezések
+-- ==========================================================
+-- Az adatbázis létrehozása a terminálban:
+--     sqlite3 repterek.db < repterek.sql
+
+-- --- B/1. feladat -----------------------------------------
+-- A tököli reptér második pályájának hozzáadása.
+-- Az `az` mező INTEGER PRIMARY KEY, ezért automatikusan kap értéket (63),
+-- így a mezőket fel kell sorolni:
+INSERT INTO palyak (nev, hossz, szelesseg, anyag)
+VALUES ('Tököl', 1100, 50, 'fű');
+
+SELECT * FROM palyak WHERE nev='Tököl';
+
+-- --- B/2. feladat -----------------------------------------
+-- A betonozott kifutópályák minden adata.
+SELECT * FROM palyak WHERE anyag='beton';
+-- Eredmény: 23 pálya
+
+-- --- B/3. feladat -----------------------------------------
+-- Az 1500 méteres és ennél hosszabb kifutópályák: csak a repülőtér
+-- neve és a pálya hossza, hossz szerint csökkenő sorrendben.
+SELECT nev, hossz
+FROM palyak
+WHERE hossz>=1500
+ORDER BY hossz DESC;
+-- Eredmény: 21 pálya, a leghosszabb Budapest-Ferihegy 3707 m
+
+-- --- B/4. feladat -----------------------------------------
+-- Mely repülőtereken van egynél több beton kifutópálya?
+SELECT nev
+FROM palyak
+WHERE anyag='beton'
+GROUP BY nev
+HAVING count(*)>1;
+-- Eredmény: Budapest-Ferihegy, Debreceni nemzetközi repülőtér,
+--           Győr-Pér, Kecskeméti katonai repülőtér, Pápa,
+--           Sármellék nemzetközi repülőtér
+
+-- --- B/5. feladat -----------------------------------------
+-- Melyik repülőtéren van a legnagyobb területű füves kifutópálya,
+-- és mekkora a területe? (segédlekérdezéssel)
+SELECT nev, hossz, szelesseg, hossz*szelesseg AS terulet
+FROM palyak
+WHERE anyag='fű'
+  AND hossz*szelesseg = (SELECT max(hossz*szelesseg) FROM palyak WHERE anyag='fű');
+-- Eredmény: Szombathely, 1600 x 500 = 800 000 m2
+
+
+-- ==========================================================
+-- C. Segédlekérdezés
+-- ==========================================================
+
+-- Mely reptereken van betonos pálya? (ez lesz a segédlekérdezés)
+SELECT DISTINCT nev FROM palyak WHERE anyag='beton';
+
+-- Mely reptereken van CSAK füves pálya, beton nincs?
+SELECT DISTINCT nev
+FROM palyak
+WHERE anyag='fű'
+  AND nev NOT IN (SELECT DISTINCT nev FROM palyak WHERE anyag='beton');
+-- Eredmény: 20 repülőtér
+
+-- Másik megoldás:
+SELECT nev
+FROM palyak
+GROUP BY nev
+HAVING SUM(anyag='beton') = 0;
+-- Ugyanaz a 20 repülőtér.
+--
+-- Hogyan működik ez?
+-- Az `anyag='beton'` egy logikai kifejezés, amelynek értéke soronként
+-- 1 (igaz) vagy 0 (hamis). A GROUP BY reptérenként csoportosít, a
+-- SUM() pedig csoportonként összeadja ezeket az 1-eket és 0-kat, azaz
+-- megszámolja a beton pályákat. Ha az összeg 0, akkor abban a
+-- csoportban egyetlen beton pálya sincs -> csak füves pályája van.

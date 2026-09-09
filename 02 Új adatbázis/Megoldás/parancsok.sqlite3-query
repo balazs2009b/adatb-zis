@@ -1,0 +1,76 @@
+-- Connected to ./koltok.db
+--
+-- FIGYELEM: a mellette lévő adatbázis már TARTALMAZZA ennek a fájlnak
+-- a végállapotát. Ha az egész fájlt újra lefuttatod, a tábla-létrehozó
+-- és adatbevivő parancsok hibát adnak ("already exists" / "no such table").
+-- Lépésenként futtasd a parancsokat, vagy kezdj egy üres adatbázissal!
+--
+
+-- ==========================================================
+-- 2. Új adatbázis készítése
+-- ==========================================================
+
+-- --- B. Tábla létrehozása ---------------------------------
+CREATE TABLE IF NOT EXISTS evek (
+    az INTEGER PRIMARY KEY,
+    nev TEXT,
+    szuletett INTEGER,
+    meghalt INTEGER
+  );
+
+-- --- C. Adatok bevitele -----------------------------------
+INSERT INTO evek VALUES(1,'Ady Endre',1877,1919);
+INSERT INTO evek VALUES(2,'Arany János',1817,1882);
+INSERT INTO evek VALUES(3,'Babits Mihály',1883,1941);
+INSERT INTO evek VALUES(4,'Csokonai Vitéz Mihály',1773,1805);
+INSERT INTO evek VALUES(5,'Illyés Gyula',1902,1983);
+INSERT INTO evek VALUES(6,'József Attila',1905,1937);
+INSERT INTO evek VALUES(7,'Kölcsey Ferenc',1790,1838);
+INSERT INTO evek VALUES(8,'Petőfi Sándor',1823,1849);
+INSERT INTO evek VALUES(9,'Radnóti Miklós',1909,1944);
+INSERT INTO evek VALUES(10,'Tóth Árpád',1886,1928);
+
+-- Hiányos sor: csak a nev mezőt töltjük ki
+INSERT INTO evek(nev) VALUES('Juhász Gyula');
+
+SELECT * FROM evek;
+-- Megfigyelés: az `az` mező automatikusan 11 lett (INTEGER PRIMARY KEY),
+-- a szuletett és a meghalt mezőbe NULL (üres érték) került.
+
+-- --- E. Exportálás ----------------------------------------
+-- Terminálban (a tananyagban k2.db szerepel, de itt koltok.db a fájl neve):
+--     sqlite3 koltok.db .dump > export.sql
+-- Az eredmény az export.sql fájlban van, ebben a mappában.
+
+-- --- E. Tábla törlése -------------------------------------
+-- Kipróbálható, de FIGYELEM: a tábla a tartalmával együtt elvész,
+-- és a 3. leckében még szükség van rá. Ezért itt megjegyzésben hagytam:
+-- DROP TABLE evek;
+
+-- Kérdés: Hogyan lehet egy teljes adatbázist törölni?
+-- Válasz: az SQLite adatbázis egyetlen fájl, ezért egyszerűen
+--         a koltok.db fájlt kell letörölni a fájlkezelőben / az Explorerben.
+
+
+-- ==========================================================
+-- F. Feladatok - megoldások
+-- ==========================================================
+
+-- 1. feladat: a tanulok tábla létrehozása (nev az elsődleges kulcs)
+--
+-- CREATE TABLE tanulok (
+--     nev TEXT PRIMARY KEY,
+--     szulev INTEGER,
+--     atlag REAL
+-- );
+
+-- 2. feladat: Nagy Béla adatainak hozzáadása (2001, 4.23)
+--
+-- INSERT INTO tanulok VALUES('Nagy Béla',2001,4.23);
+
+-- 3. feladat: a tábla törlése a tartalmával együtt
+--
+-- DROP TABLE tanulok;
+
+-- (A három parancs kipróbálva és működik; itt azért van megjegyzésben,
+--  hogy a koltok.db adatbázisban ne jöjjön létre fölösleges tábla.)
