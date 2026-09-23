@@ -1,4 +1,4 @@
--- Connected to ./milliardos.db
+-- database: milliardos.db
 --
 -- FIGYELEM: a mellette lévő adatbázis már TARTALMAZZA ennek a fájlnak
 -- a végállapotát. Ha az egész fájlt újra lefuttatod, a tábla-létrehozó
