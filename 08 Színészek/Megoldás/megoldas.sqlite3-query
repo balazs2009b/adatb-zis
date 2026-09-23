@@ -1,0 +1,80 @@
+-- database: szineszek.db
+
+-- ==========================================================
+-- 8. Színészek - segédlekérdezések
+-- ==========================================================
+-- Az adatbázis létrehozása a terminálban:
+--     sqlite3 szineszek.db < szineszek.sql
+
+-- --- B/1. feladat -----------------------------------------
+-- A New Yorkban született színészek neve, születési ideje és
+-- filmjeinek száma, születési idejük sorrendjében.
+SELECT Nev, Szulido, Filmszam
+FROM szineszek
+WHERE Szulhely='New York'
+ORDER BY Szulido;
+-- Eredmény: 9 színész, Bogart Humphrey (1899) - Weaver Sigourney (1949)
+
+-- --- B/2. feladat -----------------------------------------
+-- Az összes színésznő, valamint azok a férfi színészek, akiknek
+-- több mint 60 filmje van. Nem, azon belül filmszám szerint növekvő.
+SELECT Nev, Nem, Filmszam
+FROM szineszek
+WHERE Nem='n' OR (Nem='f' AND Filmszam>60)
+ORDER BY Nem, Filmszam;
+-- Eredmény: 117 sor (61 nő + 56 férfi)
+
+-- --- B/3. feladat -----------------------------------------
+-- Mely országok szerepelnek a táblában? Mindegyik csak egyszer, ABC rendben.
+SELECT DISTINCT Szulorsz
+FROM szineszek
+ORDER BY Szulorsz;
+-- Eredmény: 16 ország (Anglia, Belgium, Egyiptom, Franciaország,
+--           Japán, Kanada, Magyarország, Mexikó, Németország,
+--           Olaszország, Skócia, Svédország, ... , USA)
+
+-- --- B/4. feladat -----------------------------------------
+-- Ki a legfiatalabb színész azok közül, akik nem az USA-ban születtek?
+-- Jelenjen meg a település és a születési idő is.
+SELECT Nev, Szulhely, Szulido
+FROM szineszek
+WHERE Szulorsz<>'USA'
+ORDER BY Szulido DESC
+LIMIT 1;
+-- Eredmény: Winslet Kate, Reading, 1975-10-05
+
+-- Segédlekérdezéssel ugyanez (ha holtverseny lenne, mindet kiírja):
+SELECT Nev, Szulhely, Szulido
+FROM szineszek
+WHERE Szulorsz<>'USA'
+  AND Szulido = (SELECT max(Szulido) FROM szineszek WHERE Szulorsz<>'USA');
+
+-- --- B/5. feladat -----------------------------------------
+-- Mely településeken született legalább két színész?
+-- Csökkenő sorrendben a színészek száma szerint.
+SELECT Szulhely, count(*) AS Darab
+FROM szineszek
+GROUP BY Szulhely
+HAVING Darab>=2
+ORDER BY Darab DESC;
+-- Eredmény: 14 település. New York 9, Budapest 9, Párizs 6,
+--           Los Angeles 4, Chicago 3, Bronx 3, a többi 2-2.
+
+
+-- ==========================================================
+-- C. Segédlekérdezés
+-- ==========================================================
+
+-- Hol született Grace Kelly? (a táblában fordított névsorrend van!)
+SELECT Szulorsz FROM szineszek WHERE Nev='Kelly Grace';
+-- Eredmény: USA (Philadelphia, 1929-11-12)
+
+-- Kik születtek ugyanabban az országban, mint Grace Kelly?
+SELECT Nev FROM szineszek
+WHERE Szulorsz = (SELECT Szulorsz FROM szineszek WHERE Nev='Kelly Grace');
+
+-- Utolsó feladat: ugyanez, de Grace Kelly nélkül.
+SELECT Nev FROM szineszek
+WHERE Szulorsz = (SELECT Szulorsz FROM szineszek WHERE Nev='Kelly Grace')
+  AND Nev <> 'Kelly Grace';
+-- Eredmény: 71 színész (a 72 USA-beliből Grace Kelly kimarad).

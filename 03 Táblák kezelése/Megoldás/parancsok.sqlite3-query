@@ -1,0 +1,73 @@
+-- database: koltok.db
+--
+-- FIGYELEM: a mellette lévő adatbázis már TARTALMAZZA ennek a fájlnak
+-- a végállapotát. Ha az egész fájlt újra lefuttatod, a tábla-létrehozó
+-- és adatbevivő parancsok hibát adnak ("already exists" / "no such table").
+-- Lépésenként futtasd a parancsokat, vagy kezdj egy üres adatbázissal!
+--
+
+-- ==========================================================
+-- 3. Táblák kezelése
+-- ==========================================================
+
+-- --- B. Sorok listázása -----------------------------------
+SELECT * FROM evek;
+
+SELECT nev,szuletett FROM evek;
+
+SELECT nev,szuletett FROM evek WHERE szuletett<1900;
+-- Hány ilyen költő van?  ->  7 db
+-- (Arany, Csokonai, Kölcsey, Petőfi, Tóth Árpád, Ady, Babits;
+--  Juhász Gyula évszámai ekkor még üresek, ezért ő nem szerepel benne.)
+
+-- Gyakorlás: akik 1900 után haltak meg
+SELECT nev FROM evek WHERE meghalt>1900;
+-- Eredmény: Ady Endre, Babits Mihály, Illyés Gyula, József Attila,
+--           Radnóti Miklós, Tóth Árpád  ->  6 db
+-- (Juhász Gyula csak a lenti UPDATE után kerül bele, akkor már 7 db.)
+
+SELECT * FROM evek WHERE nev='Radnóti Miklós';
+
+-- --- C. Sorok módosítása, törlése -------------------------
+UPDATE evek SET szuletett=1883,meghalt=1937 WHERE nev='Juhász Gyula';
+
+DELETE FROM evek WHERE az=4;   -- Csokonai Vitéz Mihály
+
+SELECT * FROM evek;
+
+-- --- D. Tábla másolása ------------------------------------
+CREATE TABLE evek2 (
+  az INTEGER PRIMARY KEY,
+  nev TEXT,
+  szuletett INTEGER,
+  meghalt INTEGER
+);
+
+-- FIGYELEM: a tananyagban elírás van, ott "FROM evek2" szerepel.
+-- Helyesen az EREDETI táblából kell másolni:
+INSERT INTO evek2 (az, nev, szuletett, meghalt)
+SELECT az, nev, szuletett, meghalt
+FROM evek;
+
+-- --- E. Új oszlop (mező) hozzáadása -----------------------
+ALTER TABLE evek2 ADD COLUMN hely TEXT;
+
+UPDATE evek2 SET hely='Szeged' WHERE nev='Juhász Gyula';
+
+-- --- F. Tábla átnevezése ----------------------------------
+ALTER TABLE evek2 RENAME TO masolat;
+
+SELECT * FROM masolat;
+
+
+-- ==========================================================
+-- G. Feladat - melyik parancs mire való?
+-- ==========================================================
+--
+--   CREATE TABLE  ->  Új tábla létrehozása.
+--   ALTER TABLE   ->  Tábla átnevezése vagy új oszlop megadása.
+--   DROP TABLE    ->  Tábla törlése.
+--   INSERT INTO   ->  Új sor hozzáadása a táblához.
+--   UPDATE        ->  Megadott sor módosítása.
+--   DELETE FROM   ->  Megadott sorok törlése a táblából.
+--   SELECT        ->  Tábla megadott sorainak listázása.
