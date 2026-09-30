@@ -47,3 +47,35 @@ Az eredmények minden lekérdezésnél megjegyzésként a parancs alatt vannak.
 - **02. lecke:** a lecke végén `DROP TABLE evek` szerepel, de a 3. lecke
   ugyanezt a táblát használja tovább. A parancsot megjegyzésben hagytam,
   a tábla megmaradt.
+
+## Futtatási csapdák
+
+- **Az építő `.sql` fájlok csak EGYSZER futnak le.** A `repterek.sql`,
+  `szineszek.sql`, `orszagok.sql`, `filmek.sql`, `milliardos.sql` létrehozzák
+  és feltöltik a táblát. Ha egy már feltöltött adatbázison futtatod őket
+  másodszor, ezt a hibát kapod:
+
+  ```
+  table `palyak` already exists
+  ```
+
+  Nem elírás a fájlban – az adatbázis már készen van. Ilyenkor **ne az építő
+  fájlt futtasd**, hanem a `megoldas.sqlite3-query`-t. Ha tiszta újraépítés
+  kell, előbb törölni kell a táblát:
+
+  ```sql
+  DROP TABLE palyak;
+  ```
+
+  és csak utána futtatható újra a `repterek.sql`.
+
+- **A 02/03/07/09 mappák `megoldas`/`parancsok` fájljai is tartalmaznak
+  adatmódosító parancsot** (`CREATE TABLE`, `INSERT`). A mellettük lévő
+  adatbázis már a fájl végállapotát tartalmazza, ezért az egész fájl újbóli
+  lefuttatása duplikált sorokat vagy „already exists" hibát ad. Erre
+  figyelmeztető megjegyzés került a fájlok elejére.
+
+- **A query fájlnak mentve kell lennie**, és ugyanabban a mappában, mint az
+  adatbázis. Egy `Untitled` (nem mentett) fájlnál a `-- database: <db>`
+  relatív útvonala a meghajtó gyökeréből indul, és
+  `The file file:///<db> does not exist` hibát ad.

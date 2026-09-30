@@ -1,10 +1,23 @@
 -- database: repterek.db
+--
+-- FIGYELEM: a mellette lévő repterek.db már TARTALMAZZA ennek a fájlnak
+-- a végállapotát (63 sor, a B/1 feladat Tököl-sorával együtt). Ha az egész
+-- fájlt újra lefuttatod, a B/1 INSERT egy 64. sort szúr be. Lépésenként
+-- futtasd a parancsokat, vagy kezdj tiszta adatbázissal (lásd lentebb).
+--
+-- A repterek.sql NEM ezzel a fájllal együtt fut: az az EGYSZER lefutó
+-- építő parancsfájl. Ha másodszor futtatod egy már feltöltött adatbázison,
+-- ezt a hibát adja:
+--     table `palyak` already exists
+-- Tiszta újraépítéshez először törölni kell a táblát:
+--     DROP TABLE palyak;
+-- és csak utána futtatható újra:
+--     sqlite3 repterek.db < repterek.sql
+--
 
 -- ==========================================================
 -- 9. Repterek - segédlekérdezések
 -- ==========================================================
--- Az adatbázis létrehozása a terminálban:
---     sqlite3 repterek.db < repterek.sql
 
 -- --- B/1. feladat -----------------------------------------
 -- A tököli reptér második pályájának hozzáadása.
