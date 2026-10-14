@@ -1,0 +1,25 @@
+Diákként az SQLite-ot tanulom, és az alábbi feladatot kaptam. Visual Studio Code-ban dolgozunk SQlite3 Editor kiegészítővel.
+Az adatbázist létrehozó fájlt feltöltöm.
+
+3. Javítsa a regiok adattáblában „Észak Írország” nevét Észak-Írország”-ra! (3. feladat:) 
+4. Hány mérési adattal rendelkezünk az adatbázisban? Jelenítse meg a rekordok számát egy 
+rekordszam nevű számított mezőben, a mért értékek átlagát pedig egy atlag nevű 
+számított mezőben! Az áltagértéknél a tizedesjegyek száma tetszőleges lehet! (4. feladat:) 
+rekordszam 
+4320 
+atlag 
+6604.79 
+5. Készítsen lekérdezést, mely Anglia évenkénti napütéses óráinak számát jeleníti meg 
+az 1990-2000 időszakban időrendben visszafelé! A számított mező neve orak legyen, 
+a tizedesjegyek száma tetszőleges lehet! (5. feladat:) 
+ev 
+2000 
+orak 
+1438.2 
+1999 
+1561.4 
+… 
+6. Mely évek februári hónapjaiban volt 6 000 perc felett a napsütéses időszak hossza? 
+A lekérdezést rendezze az időszak hossza szerint csökkenő rendbe! (6. feladat:) 
+
+Minden részfeladatot először egyedül szeretnék megoldani. Utána kérd be a megoldásom és értékeld! Hibátlan megoldás esetén menjünk tovább, ha nem tudom, vagy hibás a megoldásom, vezess rá a megoldásra!

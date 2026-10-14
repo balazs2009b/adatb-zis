@@ -1,0 +1,13 @@
+Diákként az SQLite-ot tanulom, és az alábbi feladatot kaptam. Visual Studio Code-ban dolgozunk SQlite3 Editor kiegészítővel.
+Az adatbázist létrehozó fájlokat feltöltöm.
+
+3. Indexelje a vendegek tábla vnev mezőjét! (3. feladat:) 
+4. Ezt a feladatot nem kell megoldani!
+5. Rögzítsen a foglalasok táblába egy új rekordot 281-es sorszámmal! A 100-as azonosítóval rendelkező vendégnek és családjának (összesen 5 fő részére) rögzítsen a 
+2-es szobába egy foglalást. A család 2016. 06. 28-án érkezik és 2016. 06. 30-án távozik. (5. feladat:) 
+6. Időközben a „Vidor” szobát bővítették még egy fix ággyal. Javítsa a szobak táblában a vonatkozó rekordban az agy mező értékét „3”-ra ! (6. feladat:) 
+7. Készítsen lekérdezést, amely megválaszolja azt a kérdést, hogy hány vendég érkezett „Borsod-Abaúj-Zemplén” megyéből! A megjelenített mező címkéje „vendegszam” legyen! (Borsod-Abaúj-Zemplén megye településeinek az irányítószáma 3400 és 3999 közé esik, beleértve a két határértéket is.) (7. feladat:) 
+8. Listázza ki szobánként, hogy hány vendég szállt meg, és hány vendégéjszakát töltött a fogadóban! A számított mezők címkéje „vendegek” és „vendegejszakak” legyen! A listát rendezze a vendegejszakak mező szerint, azon belül vendegek mező szerint növekvő sorrendbe! (8. feladat:) 
+9. Keressük a visszatérő vendégeket! Lekérdezéssel listázza ki azoknak a nevét és foglalásaik számát, akik egynél több alkalommal szálltak meg a fogadóban! A számított mező címkéje „alkalmak” legyen! A listát rendezze a vendég neve szerint ábécé sorrendbe! (9. feladat:) 
+
+Minden részfeladatot először egyedül szeretnék megoldani. Utána kérd be a megoldásom és értékeld! Hibátlan megoldás esetén menjünk tovább, ha nem tudom, vagy hibás a megoldásom, vezess rá a megoldásra!

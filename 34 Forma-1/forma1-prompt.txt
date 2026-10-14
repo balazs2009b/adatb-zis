@@ -1,0 +1,13 @@
+Diákként az SQLite-ot tanulom, és az alábbi feladatot kaptam. Visual Studio Code-ban dolgozunk SQlite3 Editor kiegészítővel.
+Az adatbázist létrehozó fájlokat feltöltöm.
+
+3. Indexelje a pilotak tábla pnev mezőjét! (3. feladat:) 
+4. nem kell
+5. A 2015-ös versenynaptárból hivatalosan törölték a „Német Nagydíj”-at, ezért törölje a versenyek táblából ennek a futamnak a rekordját! (5. feladat:) 
+6. Az adatbázisban a „Brazil Nagydíj” esetén a helyszín neve hibásan szerepel. Javítsa a versenyek táblában a vonatkozó rekordban a hely mező értékét „Sao Paulo”-ra! (6. feladat:) 
+7. Készítsen lekérdezést, amely kilistázza a minta szerint annak a versenyzőnek a nevét és győzelmeinek számát, aki az évadban a legtöbbször nyert futamot! A számított mező 
+címkéje „gyozelmek” legyen! (7. feladat:) 
+8. Az egyes nagydíjakon a versenyzők különböző távokon versenyeznek. Listázza ki versenyenként a nagydíj nevét és hogy hány kilométert tesznek meg a versenyzők (kor * hossz / 1000)! A számított mező címkéje „tav” legyen! A listát rendezze a tav mező szerint csökkenően! (8. feladat:) 
+9. Készítsen lekérdezést, amely kilistázza a Forma-1 három legfiatalabb pilótájának a nevét, születési évét, csapatának nevét és az évadban elért legjobb helyezését! A legjobb helyezés oszlopának címkéje „legjobb” legyen! A listát rendezze a pilóták életkora szerint növekvő sorrendbe! (9. feladat:) 
+
+Minden részfeladatot először egyedül szeretnék megoldani. Utána kérd be a megoldásom és értékeld! Hibátlan megoldás esetén menjünk tovább, ha nem tudom, vagy hibás a megoldásom, vezess rá a megoldásra!

@@ -1,0 +1,12 @@
+Diákként az SQLite-ot tanulom, és az alábbi feladatot kaptam. Visual Studio Code-ban dolgozunk SQlite3 Editor kiegészítővel.
+Az adatbázist létrehozó fájlokat feltöltöm.
+
+2. Készítsen lekérdezést, amely a 2006-ban elhangzott előadások címét és dátumát ábécérendben sorolja fel! (2cimek) 
+3. Készítsen lekérdezést, amely kilistázza azokat az előadásokat, amelyek címe a „nyelv” szórészletet tartalmazza! A felsorolásban az előadó tudós neve és előadásának címe jelenjen meg! (3nyelv) 
+4. Készítsen lekérdezést, amely tudományterületenként megadja az előadó tudósok számát! 
+A listában a tudományterület neve és a tudósok száma jelenjen meg az utóbbi szerint csökkenő sorrendben! (4eloszlas) 
+5. Készítsen lekérdezést, amely kilistázza azokat a tudósokat, akik az előadássorozatban többször szerepeltek! Vegye figyelembe, hogy azonos nevű tudósok is szerepelnek 
+az adatbázisban! (5tobbszor) 
+6. A szervezők igyekeztek a havi előadássorozatokat a tudományterületek szempontjából is változatosan összeállítani. Készítsen lekérdezést, amely kilistázza, hogy a „Mit tud az emberi agy?” című előadás elhangzásának évében és hónapjában milyen előadások voltak! Jelenítse meg az előadás címét, előadóját és az előadó tudományterületét! (6vegyes) 
+
+Minden részfeladatot először egyedül szeretnék megoldani. Utána kérd be a megoldásom és értékeld! Hibátlan megoldás esetén menjünk tovább, ha nem tudom, vagy hibás a megoldásom, vezess rá a megoldásra!

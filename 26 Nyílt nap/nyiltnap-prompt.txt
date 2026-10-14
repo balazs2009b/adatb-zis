@@ -1,0 +1,14 @@
+Diákként az SQLite-ot tanulom, és az alábbi feladatot kaptam. Visual Studio Code-ban dolgozunk SQlite3 Editor kiegészítővel.
+Az adatbázist létrehozó fájlokat feltöltöm.
+
+2. Lekérdezés segítségével írassa ki a „Barnamalom” nevű településről érkezők nevét! 
+(2barnamalom) 
+3. Készítsen lekérdezést, amely meghatározza, hogy mikor lehet „angol” nyelvórát látogatni! A lekérdezés jelenítse meg a dátumot, a terem nevét, valamint az óra sorszámát! Az eredmény a dátum és azon belül az óra sorszáma szerint növekvő sorrendbe legyen rendezve! (3angol) 
+4. A 9. évfolyamon látogatható „matematika” és „fizika” tanórákat lekérdezés segítségével írassa ki! A csoport neve, a tantárgy neve és a dátum jelenjen meg, a tantárgy neve szerinti ábécérendben! Tudjuk, hogy minden 9. évfolyamos csoport nevének a kezdete „9”. (4matfiz) 
+5. Lekérdezés segítségével határozza meg, hogy melyik településről hány diák érkezik a nyílt napokra! Az eredmény a diákok száma szerint csökkenő sorrendbe legyen rendezve! (5telepulesfo) 
+6. Készítsen lekérdezést, amely ábécérendben felsorolja, hogy milyen tantárgyak óráit lehet látogatni! Minden tantárgy neve csak egyszer jelenjen meg! (6tantargyak) 
+7. Lekérdezés segítségével listázza ki az „Angol Anna” tanárnő „2028. 11. 10.” napján tartandó órájára regisztrált diákok nevét, e-mail-címét és telefonszámát! (7angolanna) 
+8. Lekérdezés segítségével listázza ki azoknak a diákoknak a nevét, akik a „Majer Melinda” nevű diákkal azonos településről regisztráltak! Majer Melinda neve ne jelenjen meg a listában! (8majer) 
+9. A szabad helyek áttekintéséhez készítse el a minta szerinti lekérdezést! Az oszlopok a minta szerinti sorrendben jelenjenek meg! A szabad hellyel nem rendelkező órák ne jelenjenek meg a listában! A számított oszlop felett a „szabad” felirat jelenjen meg! A sorok a szabad helyek száma szerint csökkenő sorrendben jelenjenek meg! (9szabad)
+
+Minden részfeladatot először egyedül szeretnék megoldani. Utána kérd be a megoldásom és értékeld! Hibátlan megoldás esetén menjünk tovább, ha nem tudom, vagy hibás a megoldásom, vezess rá a megoldásra!

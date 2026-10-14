@@ -1,0 +1,11 @@
+Diákként az SQLite-ot tanulom, és az alábbi feladatot kaptam. Visual Studio Code-ban dolgozunk SQlite3 Editor kiegészítővel.
+Az adatbázist létrehozó fájlokat feltöltöm.
+
+12. Rögzítse a megallok adattáblába a „Kőbányai garázs” megállót 198-as azonosítóval! (12. feladat:) 
+13. Hibásan szerepel a jaratok adattáblában a 20-as azonosítójú járatnál az első ajtós felszállási rend! Javítsa a mező értékét Hamis logikai értékre! (13. feladat:) 
+14. Listázza ki azoknak a járatoknak a járatszámát, amelyeken bevezették az első ajtós felszállási rendet! (14. feladat:) 
+15. Mely megállók neve végződik „sétány” szóra? Jelenítse meg a megállók nevét ábécé rendben! (15. feladat:) 
+16. A fővárosban 2018 novemberében indult el „CITY” járatszámmal egy hétvégi troli járat. Listázza ki a járat megállóit az „A” irányba! A listát rendezze a megállók sorszáma szerint a minta alapján! A mezők címkéit a minta szerint állítsa be! (16 feladat:) 
+17. Listázza ki azokat a megállókat, ahol legalább 3 különböző járatra lehet felszállni! A név mellett jelenítse meg az adott megállót érintő járatok számát is! A mezők címkéit a minta szerint állítsa be! (A listát nem kell rendeznie!) (17 feladat:) 
+
+Minden részfeladatot először egyedül szeretnék megoldani. Utána kérd be a megoldásom és értékeld! Hibátlan megoldás esetén menjünk tovább, ha nem tudom, vagy hibás a megoldásom, vezess rá a megoldásra!

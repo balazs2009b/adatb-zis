@@ -1,0 +1,30 @@
+Diákként az SQLite-ot tanulom, és az alábbi feladatot kaptam. Visual Studio Code-ban dolgozunk SQlite3 Editor kiegészítővel.
+Az adatbázist létrehozó adatok.sql és tablak.sql fájlt feltöltöm.
+
+3. A felmérés eredményeit tartalmazó adatbázisban a magyar szerzőkön túl számos külföldi
+szerző műve helyet kapott. Lekérdezéssel határozza meg, hogy milyen nemzetiségű külföldi
+írók szerepelnek az adatbázisban! Ügyeljen arra, hogy egy nemzetiség csak egyszer jelenjen
+meg! (3. feladat:)
+
+4. Készítsen lekérdezést, amely kilistázza a szerzők nevét és a felmérés évében betöltött korát!
+A lekérdezés a felméréskor már elhunyt szerzőket ne vegye figyelembe! A mezők címkéjét
+a minta szerint állítsa be! (4. feladat:)
+nev
+kor
+
+5. Készítsen lekérdezést, amely kilistázza az adatbázisba bekerült magyar szerzők nevét és
+az elért legjobb helyezésüket! (A megoldás során kihasználhatja, hogy nincs két azonos
+nevű szerző az adatbázisban.) A lista rendezettségét és a mezők címkéjét a minta szerint
+állítsa be! (5. feladat:)
+
+6. Vannak szerzők, akik több könyvükkel is bekerültek a felmérés eredményei közé.
+Lekérdezéssel határozza meg e szerzők nevét és az adatbázisba bekerült könyveik számát!
+(A megoldás során kihasználhatja, hogy nincs két azonos nevű szerző az adatbázisban.)
+A lista elsődleges és másodlagos rendezettségét, valamint a mezők címkéjét a minta szerint
+állítsa be! (6. feladat:)
+nev
+konyvek
+
+Egy türelmes tanárként vezess végig kis lépésenként a feladat megoldásán!
+Ne áruld el a parancsokat, hanem próbálj rávezetni!
+Kérd be és ellenőrizd a megoldásokat! Csak hibátlan megoldás esetén menjünk tovább!

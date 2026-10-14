@@ -1,0 +1,17 @@
+Diákként az SQLite-ot tanulom, és az alábbi feladatot kaptam. Visual Studio Code-ban dolgozunk SQlite3 Editor kiegészítővel.
+Az adatbázist létrehozó fájlokat feltöltöm.
+
+2. Lekérdezés segítségével írassa ki a ragadványnévvel rendelkező királyok nevét és ragadványnevét a születési évük sorrendjében! (2nevek) 
+3. Készítsen lekérdezést, amely felsorolja az Árpád-ház tagjainak nevét, uralkodásuk kezdő és befejező évét az uralkodásuk sorrendjében! Ha valaki többször uralkodott, akkor a listában többször jelenjen meg! (3arpad) 
+4. Lekérdezés segítségével sorolja fel azoknak a királyoknak a nevét, akik már a koronázásuk éve előtt elfoglalták a hivatalukat! (4koran) 
+5. Lekérdezés segítségével határozza meg, hogy hány király volt Magyarországon 1601-től 1700-ig! Vegye figyelembe, hogy a királyok uralkodásának csak egy része is eshetett 
+a megjelölt időszakba! Kihasználhatja, hogy ebben az időszakban minden király csak egyszer uralkodott. (5XVII) 
+6. Készítsen lekérdezést, amely meghatározza, hogy ki uralkodott a leghosszabb ideig egyfolytában és hány évet? Az uralkodás hosszának számítása például: I. István 1000-től 
+1038-ig uralkodott, tehát 39 évig volt magyar király. (6hosszu) 
+7. Lekérdezés segítségével adja meg azon királyok nevét, akik 15 évesnél fiatalabban kezdtek uralkodni, és hogy ekkor hány évesek voltak! Az adatokat az életkor szerint növekvő 
+sorrendben jelenítse meg! (7fiatal) 
+8. A történelmi események során előfordult, hogy az uralkodó a királyi hivatalt többször foglalta el. Készítsen lekérdezést, amely meghatározza azoknak a királyoknak a nevét és uralkodásuk összes idejét, akik többször foglalták el a hivatalt! (8tobbszor) 
+9. Készítsen lekérdezést, amely meghatározza, hogy melyik királyi ház hány uralkodót adott 
+Magyarországnak! A lista a személyek száma szerint csökkenő sorrendű legyen! Ügyeljen arra, hogy a többször uralkodókat csak egyszer vegye figyelembe a számlálásnál! (9hazak)
+
+Minden részfeladatot először egyedül szeretnék megoldani. Utána kérd be a megoldásom és értékeld! Hibátlan megoldás esetén menjünk tovább, ha nem tudom, vagy hibás a megoldásom, vezess rá a megoldásra!

@@ -1,0 +1,13 @@
+Diákként az SQLite-ot tanulom, és az alábbi feladatot kaptam. Visual Studio Code-ban dolgozunk SQlite3 Editor kiegészítővel.
+Az adatbázist létrehozó adatok.sql és tablak.sql fájlt feltöltöm.
+
+3.Tóth Antal (1044-es rajtszámmal) 4. körös eredménye kimaradt a nyilvántartásból, pedig sikeresen teljesítette a távot. Rögzítse az eredmenyek táblában a futó 15 765 másodperces köridejét! (3. feladat:)
+4.	Listázza ki a női futók nevét és születési évét! A listát rendezze név szerint ábécé rendbe! (4. feladat:)
+5.	Listázza ki a 42 éves vagy ennél idősebb futók nevét és korát! A számított mező címkéje „kor” legyen! Az életkorszámítás során a verseny 2016-os évszámával számoljon! A listát rendezze az életkor (év és azon belül hónap) szerint csökkenő rendbe! (5. feladat:)
+6.	Listázza ki a 10 legjobb köridőt futó férfi nevét és köridejét! (Feltételezheti, hogy nem volt holtverseny a futók között.) (6. feladat:)
+7.	Listázza ki csapatonként a csapattagok összesített köridejét! A mezők címkéi „csapat” és
+„csapatido” legyen! A listát rendezze  úgy,  hogy  a  leggyorsabb  csapattal  kezdődjön! (7. feladat:)
+
+Egy türelmes tanárként vezess végig kis lépésenként a feladat megoldásán!
+Ne áruld el a parancsokat, hanem próbálj rávezetni!
+Kérd be és ellenőrizd a megoldásokat! Csak hibátlan megoldás esetén menjünk tovább!

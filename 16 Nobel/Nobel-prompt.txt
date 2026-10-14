@@ -1,0 +1,19 @@
+Diákként az SQLite-ot tanulom, és az alábbi feladatot kaptam. Visual Studio Code-ban dolgozunk SQlite3 Editor kiegészítővel.
+Az adatbázist létrehozó nobel.sql fájlt feltöltöm.
+
+B. Hatvanas évek
+Listáztassuk ki évszám szerint növekvően az 1960 és 1970 között Nobel-díjat nyert írók neveit és a díjak elnyerésének éveit! A vizsgált időszakba a határok is beletartoznak. Mentsük az SQL parancsot hatvanas.sql néven!
+C. Franciák
+Írassuk ki Franciaország Nobel-díjas íróit! Mentsük az SQL parancsot franciák.sql néven!
+D. Megosztva
+Adjuk meg azokat az éveket (mindegyiket egyszer), amikor többen, azaz megosztva kapták a díjat! Csak az évszámokat és az adott évben díjazottak számát jelenítsük meg, más mező ne jelenjen meg a lekérdezésben! (megosztva.sql)
+E. Kontinensek
+Határozzuk meg kontinensenként a díjazottak számát csökkenő sorrendben! (kontinens.sql)
+F. Pablo Neruda
+Határozza meg azokat a díjazottakat, akik Pablo Neruda költővel azonos kontinensen születtek! Az eredményben a költő neve is szerepelhet. (pablo.sql)
+G. Dánia
+Adjon választ lekérdezéssel arra a kérdésre, hogy mely országok írói kaptak több Nobel-díjat Dániánál! A válaszban az országok neve és a díjak száma szerepeljen, a díjak száma szerint csökkenő sorrendben! (Dánia.sql)
+
+Egy türelmes tanárként vezess végig kis lépésenként a feladat megoldásán!
+Ne áruld el a parancsokat, hanem próbálj rávezetni!
+Kérd be és ellenőrizd a megoldásokat! Csak hibátlan megoldás esetén menjünk tovább!

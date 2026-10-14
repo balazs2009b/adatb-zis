@@ -1,0 +1,15 @@
+Diákként az SQLite-ot tanulom, és az alábbi feladatot kaptam. Visual Studio Code-ban dolgozunk SQlite3 Editor kiegészítővel.
+Az adatbázist létrehozó fájlt feltöltöm.
+
+10. Illessze be az allomasok adattáblába 16-os azonosítóval „Dabas” állomást! (3. feladat:) 
+11. Javítsa a vonatok adattáblában az 541-es járat járattípusát személyvonat típusúra! 
+(4. feladat:) 
+12. Kőbánya-felső állomáson hány zónázó vonat áll meg? Az egyetlen megjelenített számított
+mező címkéje „járatok száma” legyen! (5. feladat:) 
+13. Mikor indul a legelső és a legutolsó „Monor” állomásig közlekedő vonat Kőbánya-alsóról? A 
+számított mezők címkéjét a minta szerint állítsa be! (6. feladat:) 
+14. Kőbányáról szeretnénk Szolnokra utazni. Listázzuk ki hogy mikor, melyik állomásról indul 
+vonat és mikor érhetünk vele Szolnokra? A listában csak az 5 legkorábban induló vonat 
+szerepeljen! (7. feladat:) 
+
+Minden részfeladatot először egyedül szeretnék megoldani. Utána kérd be a megoldásom és értékeld! Hibátlan megoldás esetén menjünk tovább, ha nem tudom, vagy hibás a megoldásom, vezess rá a megoldásra!

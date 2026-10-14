@@ -1,0 +1,16 @@
+Diákként az SQLite-ot tanulom, és az alábbi feladatot kaptam. Visual Studio Code-ban dolgozunk SQlite3 Editor kiegészítővel.
+Az adatbázist létrehozó fájlokat feltöltöm.
+
+3. Ezt a feladatot nem kell megoldani!
+4. A 9-es sorszámú jelentkező (Dobos Zita) bejelentette, hogy mobiltelefonszáma 
+megváltozott! Javítsa a jelentkezesek táblában a vonatkozó rekordban a mobil mező 
+értékét „30784613”-ra! Megoldásában figyeljen arra, hogy akár azonos nevű személyek is 
+lehetnek a jelentkezők közt! (4. feladat:) 
+5. Rögzítse 8-as azonosítóval a „holland” nyelvet a nyelvek adattáblába! (5. feladat) 
+6. Készítsen lekérdezést, amely kilistázza a vizsgált negyedév jelentkezői közül a legidősebb 
+és legfiatalabb jelentkezők (2018-ban betöltött) életkorát! A számított mezők neve „legfiatalabb” és „legidosebb” legyen! (6. feladat:) 
+7. Egy vizsgaidőpontra maximum 25 fő jelentkezését fogadják el! Lekérdezéssel listázza ki azokat a vizsgaidőpontokat, ahol telt házas volt a vizsga! Az eredményt rendezze úgy, hogy a legrégebbi időponttal záruljon a lista! (7. feladat:) 
+8. Lekérdezéssel listázza ki nyelvenként és szintenként a negyedévben nyelvvizsgára jelentkezők számát! A számított mező neve „vizsgazo” legyen! A listát rendezze számított 
+mező szerint csökkenő sorrendben! (8. feladat:) 
+
+Minden részfeladatot először egyedül szeretnék megoldani. Utána kérd be a megoldásom és értékeld! Hibátlan megoldás esetén menjünk tovább, ha nem tudom, vagy hibás a megoldásom, vezess rá a megoldásra!

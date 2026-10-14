@@ -1,0 +1,32 @@
+Diákként az SQLite-ot tanulom, és az alábbi feladatot kaptam. Visual Studio Code-ban dolgozunk SQlite3 Editor kiegészítővel.
+Az adatbázist létrehozó fájlt feltöltöm.
+
+3. Az ünnepélyes eredményhirdetésen számos arany-, ezüst- és bronzérmet osztottak ki. 
+Azoknak, akik lemaradtak a dobogóról, de legalább 700 pontot kaptak, „kiválósági érem” 
+lett a jutalma! (Tudjuk, hogy egyik dobogós sem kapott 700 pontnál kevesebbet.) 
+Lekérdezéssel határozza meg, hogy hány érmet osztottak ki! A számított mező címkéjét a 
+minta szerint állítsa be! (3. feladat:) 
+ermek
+265 
+
+4. Az orszag táblában szereplő nemzetek közül nem mindegyik vett részt a budapesti 
+versenyen. Lekérdezéssel jelenítse meg ismétlődések nélkül azoknak az országoknak 
+a nevét ábécé rendben, melyek indítottak versenyzőt a 2018-as EuroSkillsen! (4. feladat:) 
+orszagNev
+Ausztria 
+Belgium 
+Ciprus 
+… 
+
+5. Hány versenyző vett részt a megmérettetésen az egyes szakmákban? Lekérdezéssel jelenítse 
+meg a szakmák megnevezését és a részt vevő versenyzők számát úgy, hogy a legnépesebb 
+szakmával kezdődjön a lista! A számított mező címkéjét a minta szerint állítsa be! 
+(5. feladat:) 
+
+6. Lekérdezéssel készítse el a versenyzők összesített eredménylistáját! A lekérdezés 
+a versenyzők nevét, országának nevét, szakmájának nevét és az elért pontszámot 
+tartalmazza! Az eredményt rendezze a minta alapján pontszám szerint csökkenően! Azonos 
+pontszám esetén ábécé rendben jelenjenek meg a versenyzők nevei! A lekérdezés által 
+megjelenített sorokat korlátozza a legjobb 25 eredményre! (6. feladat:) 
+
+Minden részfeladatot először egyedül szeretnék megoldani. Utána kérd be a megoldásom és értékeld! Hibátlan megoldás esetén menjünk tovább, ha nem tudom, vagy hibás a megoldásom, vezess rá a megoldásra!

@@ -1,0 +1,17 @@
+Diákként az SQLite-ot tanulom, és az alábbi feladatot kaptam. Visual Studio Code-ban dolgozunk SQlite3 Editor kiegészítővel.
+Az adatbázist létrehozó fájlokat feltöltöm.
+
+4. „Nagy Vince” (okt. azon: 0143302) egészségügyi okok miatt a pótnapon írta meg 
+központi felvételijét, aminek a magyar irodalom és nyelv tantárgy pontszámát hibásan 
+rögzítették. Javítsa a diakok táblában a vonatkozó rekordban a kpmagy mező értékét 
+„43”-ra! Megoldásában figyeljen arra, hogy akár azonos nevű diákok is lehetnek a 
+jelentkezők között! (4. feladat:) 
+5. Készítsen lekérdezést, amely kilistázza azon felvételizők nevét, akik maximális 
+pontszámú központi felvételit írtak mindkét központi felvételi tárgyból, és a hozott 
+pontjuk az általános iskolából legalább 40 pont! A listát a felvételizők neve szerint ábécé rendben jelenítse meg! (5. feladat:) 
+6. Listázza ki ágazatonként, első helyen a Jószakma Szakgimnázium nyelvi előkészítő 
+osztályába jelentkezők számát! A lekérdezésben jelenítse meg a jelentkezők hozott 
+pontjainak terjedelmét is! (Terjedelem alatt a legtöbb és a legkevesebb hozott ponttal jelentkező pontszámkülönbségét értjük.) A számított mező címkéje „jelentkezoszam” és „terjedelem” legyen! A listát rendezze a jelentkezőszám szerint csökkenő sorrendbe! (6. feladat:) 
+7. Az iskola szeretné elkészíteni a jelentkezők előzetes rangsorát. Lekérdezéssel listázza ki a felvételizők nevét, a jelentkezésben megjelölt ágazatot, a nyelvi előkészítő jelleget, a jelentkezés sorszámát és a felvételiző összesített pontszámát! A számított mező címkéje „osszpont” legyen! A listát rendezze az agazat mező szerint növekvő sorrendbe, azon belül pedig az osszpont mező szerint csökkenő sorrendbe! Ha a jelentkezők összpontszáma azonos, akkor pedig a hely mező szerint növekvő sorrendben jelenjenek meg a felvételizők adatai! (7. feladat:) 
+
+Minden részfeladatot először egyedül szeretnék megoldani. Utána kérd be a megoldásom és értékeld! Hibátlan megoldás esetén menjünk tovább, ha nem tudom, vagy hibás a megoldásom, vezess rá a megoldásra!
