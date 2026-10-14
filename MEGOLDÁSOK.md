@@ -89,6 +89,8 @@ Ezek sorban készülnek, fejezetenként pusholva.
 |---|---|---|---|
 | 12 Több tábla | `iskola.db` (osztalyok 4, diakok 6) | `megoldas.sqlite3-query`, `feladat.sql` | JOIN, LEFT JOIN, önkapcsolás, GROUP BY két táblán |
 | 13 Idegen kulcs | `iskola.db` (+ diakok2, diakok3) | `megoldas.sqlite3-query` | FOREIGN KEY, RESTRICT, ON UPDATE/DELETE CASCADE |
+| 14 Maraton | `maratonvalto.db` (futok 292, eredmenyek 312) | `megoldasok.sql` (+ `.sqlite3-query`) | érettségi feladatsor: INSERT, számított mező, JOIN, LIMIT, GROUP BY |
+| 15 Nagy könyv | `nagykonyv.db` (szerzo 103, konyv 153) | `megoldasok.sql` (+ `.sqlite3-query`) | érettségi feladatsor: DISTINCT, IS NULL, min(), HAVING |
 
 ### Hibák a 12-13. fejezetben
 
@@ -105,3 +107,21 @@ Ezek sorban készülnek, fejezetenként pusholva.
   annak idegen kulcsa RESTRICT, és az blokkolja a szülő módosítását - a `diakok3`
   CASCADE-je ezen nem segít. Előbb `DROP TABLE diakok2;` kell.
   (Ellenőrizve: diakok2 megvan -> hiba; eldobva -> lefut és kaszkádol.)
+
+### Megjegyzések a 14-15. fejezethez
+
+- **14. Maraton, 3. feladat:** Tóth Antalnak (1044) a feladat előtt *egyetlen*
+  eredménye sem volt a táblában, nem csak a 4. köre hiányzott.
+- **14. Maraton, 7. feladat:** a 104-es csapat csak a 3. feladatban beírt
+  15 765 másodperc miatt lesz utolsó. Minden más köridő 1702 és ~4000 s közötti
+  (átlag 2446 s); a 15 765 s = 4 óra 22 perc 7 km-re. A feladat adja így, ezért
+  nem változtattam rajta, de kiugró érték.
+- **15. Nagy könyv:** a `szerzo` táblában **J. K. Rowling kétszer szerepel**, két
+  külön azonosítóval (`J. K. Rowling` 1965 és `Joanne Kathleen Rowling` 1956),
+  eltérő születési évvel. Ugyanaz a személy - a feladatsor adathibája. A feladatok
+  szövege kifejezetten engedi a név szerinti csoportosítást, ezért a megoldásokat
+  nem befolyásolja.
+- Mind a négy lekérdezés eredménye **pontosan egyezik a vizsgafeladat PDF-jében
+  közölt mintával** (3.: angol/francia/amerikai; 4.: Böszörményi 41, Dan Brown 41,
+  Rowling 40; 5.: Gárdonyi 1, Molnár 2, Szabó Magda 3; 6.: Szabó Magda 5, majd a
+  négykönyvesek ábécé rendben).

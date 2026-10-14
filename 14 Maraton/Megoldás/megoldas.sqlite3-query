@@ -1,0 +1,77 @@
+-- database: maratonvalto.db
+--
+-- FIGYELEM: a mellette lévő maratonvalto.db már TARTALMAZZA a
+-- végállapotot, benne a 3. feladat beszúrásával (eredmenyek 312 sor).
+-- A 3. feladat INSERT-jét ne futtasd újra: a (futo, kor) páros
+-- elsődleges kulcs, ezért "UNIQUE constraint failed" hibát adna.
+-- A tablak.sql / adatok.sql az EGYSZER lefutó építő parancsfájlok.
+--
+-- A leadandó fájl a megoldasok.sql - a javítás során csak azt
+-- értékelik. Ez a fájl ugyanazokat a parancsokat tartalmazza,
+-- kiegészítve az eredményekkel, hogy ellenőrizni tudd őket.
+
+-- ==========================================================
+-- 14. Maratonváltó (2016-os verseny)
+-- ==========================================================
+-- futok(fid, fnev, szulev, szulho, csapat, ffi)   292 sor
+-- eredmenyek(futo, kor, ido)                      311 + 1 sor
+-- ffi: 1 = férfi (145 fő), 0 = nő (147 fő)
+-- kor az eredmenyek táblában = hányadikként futott (nem életkor!)
+
+-- --- 3. feladat -------------------------------------------
+-- Tóth Antal (1044) 4. körös, 15 765 másodperces köridejének rögzítése.
+INSERT INTO eredmenyek (futo, kor, ido) VALUES (1044, 4, 15765);
+-- Megjegyzés: Tóth Antalnak ezelőtt EGYETLEN eredménye sem volt a
+-- táblában, nem csak a 4. köre hiányzott.
+-- Az eredmenyek tábla 311 -> 312 sor.
+
+-- --- 4. feladat -------------------------------------------
+-- A női futók neve és születési éve, név szerint ábécé rendben.
+SELECT fnev, szulev
+FROM futok
+WHERE ffi=0
+ORDER BY fnev;
+-- Eredmény: 147 sor, Antal Erika (1985) ... Végh Renáta (1986)
+
+-- --- 5. feladat -------------------------------------------
+-- A 42 éves vagy idősebb futók neve és kora, "kor" címkével.
+-- Az életkor a verseny évszámával: 2016 - szulev.
+-- A 42 év felső korlátja a születési évre: szulev <= 1974.
+-- Rendezés: életkor szerint csökkenő, azon belül hónap szerint
+-- (ugyanannyi évesek közül az korosabb, aki korábbi hónapban született,
+--  ezért szulho növekvő).
+SELECT fnev, 2016-szulev AS kor
+FROM futok
+WHERE 2016-szulev>=42
+ORDER BY kor DESC, szulho;
+-- Eredmény: 83 sor, 50 évesekkel kezdve, Király Tibor (42) az utolsó.
+-- (A kor DESC ugyanaz, mint a szulev növekvő - ellenőrizve, hogy a két
+--  rendezés sorról sorra azonos eredményt ad.)
+
+-- --- 6. feladat -------------------------------------------
+-- A 10 legjobb köridőt futó férfi neve és köridejük.
+SELECT futok.fnev, eredmenyek.ido
+FROM futok
+JOIN eredmenyek ON futok.fid=eredmenyek.futo
+WHERE futok.ffi=1
+ORDER BY eredmenyek.ido
+LIMIT 10;
+-- Eredmény: Kovács Bence 1702, Király Richárd 1703, Király Zsombor 1714,
+--           Fodor Patrik 1715, Fodor Alex 1750, Vincze Nándor 1761,
+--           Varga Ervin 1765, Takács Ervin 1776, Lengyel Tivadar 1784,
+--           Csonka András 1795
+
+-- --- 7. feladat -------------------------------------------
+-- Csapatonként a csapattagok összesített köridejük, "csapat" és
+-- "csapatido" címkével, a leggyorsabb csapattal kezdve.
+SELECT futok.csapat AS csapat, sum(eredmenyek.ido) AS csapatido
+FROM futok
+JOIN eredmenyek ON futok.fid=eredmenyek.futo
+GROUP BY futok.csapat
+ORDER BY csapatido;
+-- Eredmény: 52 sor. Leggyorsabb: 110 csapat 11840 s.
+--           Leglassabb: 104 csapat 26294 s.
+-- Megjegyzés: a 104-es csapat csak a 3. feladatban beírt 15 765 s miatt
+-- utolsó. Minden más köridő 1702 és ~4000 s között van (átlag 2446 s),
+-- a 15 765 s = 4 óra 22 perc 7 km-re. Ez a feladatban megadott adat,
+-- ezért így hagytam, de látható kiugró érték.
