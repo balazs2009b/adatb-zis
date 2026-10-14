@@ -79,3 +79,29 @@ Az eredmények minden lekérdezésnél megjegyzésként a parancs alatt vannak.
   adatbázis. Egy `Untitled` (nem mentett) fájlnál a `-- database: <db>`
   relatív útvonala a meghajtó gyökeréből indul, és
   `The file file:///<db> does not exist` hibát ad.
+
+## 12-37. fejezetek (folyamatban)
+
+A main `72a1944` commitja 26 új fejezetet tett fel (12 Több tábla ... 37 Tervezés 3).
+Ezek sorban készülnek, fejezetenként pusholva.
+
+| Mappa | Adatbázis | Parancsfájl | Mit tanít |
+|---|---|---|---|
+| 12 Több tábla | `iskola.db` (osztalyok 4, diakok 6) | `megoldas.sqlite3-query`, `feladat.sql` | JOIN, LEFT JOIN, önkapcsolás, GROUP BY két táblán |
+| 13 Idegen kulcs | `iskola.db` (+ diakok2, diakok3) | `megoldas.sqlite3-query` | FOREIGN KEY, RESTRICT, ON UPDATE/DELETE CASCADE |
+
+### Hibák a 12-13. fejezetben
+
+- **12. lecke, A. pont:** XAMPP-ot, MySQL szervert és PHPMyAdmin-t ír elő, de a
+  mellékelt `iskola.sql` SQLite-szintaxisú (`TEXT` / `REAL` / `INTEGER PRIMARY KEY`),
+  és a 13. lecke is kifejezetten az SQLite viselkedéséről beszél. SQLite-ban készült,
+  ahogy az 1-10. fejezet.
+- **13. lecke:** az SQLite-ban az idegen kulcs **alapértelmezésben ki van kapcsolva**.
+  `PRAGMA foreign_keys = ON` nélkül a C. és D. pont hibaüzenetei nem jönnek: a hibás
+  `INSERT` simán lefut. A lecke ezt nem említi, pedig nélküle az egész C-D. pont
+  nem mutat semmit. (Ellenőrizve: `fk=OFF` -> lefut, `fk=ON` -> `FOREIGN KEY constraint failed`.)
+- **13. lecke, D. pont:** a lecke szerint az `UPDATE osztalyok SET osztaly='1C'`
+  „működik". **Nem működik**, amíg a C. pontban készített `diakok2` tábla létezik:
+  annak idegen kulcsa RESTRICT, és az blokkolja a szülő módosítását - a `diakok3`
+  CASCADE-je ezen nem segít. Előbb `DROP TABLE diakok2;` kell.
+  (Ellenőrizve: diakok2 megvan -> hiba; eldobva -> lefut és kaszkádol.)
