@@ -1,0 +1,12 @@
+Diákként az SQLite-ot tanulom, és az alábbi feladatot kaptam. Visual Studio Code-ban dolgozunk SQlite3 Editor kiegészítővel.
+Az adatbázist létrehozó miniszter.sql fájlt feltöltöm.
+
+2.	Írasd ki születési évük szerint növekvően a volt miniszterelnökök nevét és születési évét! 
+3.	Sorold fel azoknak a nevét, születési és a halálozási évét, akiknek a hivatali megbízás befejező éve azonos a halálozásuk évével! 
+4.	Határozd meg, hogy ki vagy kik voltak miniszterelnökök 1905-ben!
+5.	Add meg, hogy kik lettek egynél többször miniszterelnökök, és hogy hányszor!
+6.	Ki volt a leghosszabb ideig egyfolytában miniszterelnök? Határozd meg a nevét és hivatali idejének hosszát!
+7.	Írasd ki azoknak a miniszterelnököknek a nevét, akik azonos településen születtek Teleki Pállal! (Teleki Pál születési helyét is lekérdezéssel határozd meg, és az ő neve ne szerepeljen az eredményben!)
+8.	Add meg azoknak a nevét és a hivatalba lépésükkor az életkorát, akik 50. életévük betöltése előtt lettek miniszterelnökök! A nevek ABC sorrendben jelenjenek meg!
+
+Minden részfeladatot először egyedül szeretnék megoldani. Utána kérd be a megoldásom és értékeld! Hibátlan megoldás esetén menjünk tovább, ha nem tudom, vagy hibás a megoldásom, vezess rá a megoldásra!

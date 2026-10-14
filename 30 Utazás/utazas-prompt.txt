@@ -1,0 +1,13 @@
+Diákként az SQLite-ot tanulom, és az alábbi feladatot kaptam. Visual Studio Code-ban dolgozunk SQlite3 Editor kiegészítővel.
+Az adatbázist létrehozó fájlokat feltöltöm.
+
+2.	Az érdeklődők először a szállodákról és az ellátásról tudakozódnak. Listázza ki a szállodák minden adatát! Az adatok a besorolas szerint csökkenő sorrendben, egyezés esetén pedig a szálloda neve szerint ábécérendben jelenjenek meg!
+3.	A legtöbben a tunéziai utak iránt érdeklődnek. Listázza ki ezeket! Csak a szálloda neve, az indulási időpont és az ár jelenjen meg!
+4.	A Szabó család március folyamán szeretne indulni. Mindenképpen közvetlen tengerparti szállodába szeretnének menni. Listázza ki az ezeknek a feltételeknek megfelelő utakat! Jelenítse meg az országot, a szálloda nevét, a szálloda besorolását, az indulási időpontot és az árat!
+5.	A Kiss család az olcsóbb lehetőségeket keresi, az indulási időpont szempontjából rugalmasak. Az 5 csillagos szállodákat túl drágának ítélik, félpanziós ellátást igényelnek, viszont – mivel kisgyermekkel utaznak – nem szeretnék, ha a reptér 20 km-nél távolabb lenne a szállodától. Listázza ki a Kiss család igényeinek megfelelő öt legolcsóbb lehetőséget! A lekérdezésben kizárólag csak az ország neve, a szálloda azonosítója és az ár szerepeljen, az ár szerint növekvő sorrendbe rendezve! Az egy adott szállodában azonos áron szereplő utakat ne tekintse külön lehetőségeknek!
+6.	Egy baráti társaság közös utazást tervez. Összesen hatan utaznak, és a korábban már megkedvelt „Marhaba” hotelt választják ismét. Llistázza ki a rendelkezésre álló utak esetén a teljes társaságra vonatkozó költséget! Jelenítse meg az út kezdő és befejező dátumát, valamint az összköltséget! (Az út hosszába beszámít az indulás és a hazautazás napja is!) A lista legyen az indulási dátum szerint csökkenő sorrendbe rendezve!
+Segítség: egy dátumhoz a következőképpen lehet napokat hozzáadni:
+ADDDATE(dátum,kifejezés)
+7.	Listázza ki, hogy melyik szállodába hány utat indít az utazási iroda!
+
+Minden részfeladatot először egyedül szeretnék megoldani. Utána kérd be a megoldásom és értékeld! Hibátlan megoldás esetén menjünk tovább, ha nem tudom, vagy hibás a megoldásom, vezess rá a megoldásra!

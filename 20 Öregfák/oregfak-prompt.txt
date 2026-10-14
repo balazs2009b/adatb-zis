@@ -1,0 +1,12 @@
+Diákként az SQLite-ot tanulom, és az alábbi feladatot kaptam. Visual Studio Code-ban dolgozunk SQlite3 Editor kiegészítővel.
+Az adatbázist létrehozó fájlt feltöltöm.
+
+3.	Listáztassa ki ábécérendben a 900 centiméternél nagyobb körméretű fák fajneveit és körméreteit méterben, két tizedesjegyre kerekítve! 
+(kerekítés: round(mit, jegyek) )
+4.	Írassa ki a legnagyobb kerületű fa fajnevét, körméretét és mérésének évét!
+5.	Határozza meg, hogy az egyes településekhez hány fa feljegyzése tartozik! A listát darabszám szerint csökkenően, a település nevével együtt jelenítse meg! Azonos darabszám esetén a településnév szerint ábécérendben legyen a lista!
+6.	Listázza ki, hogy megyénként hány fáról állnak rendelkezésre adatok!
+7.	Gyűjtse ki azoknak a fáknak a fajnevét, amelyek olyan településhez tartoznak, amelyen tiszafa is található! A listában a tiszafa neve ne, minden további fajnév csak egyszer jelenjen meg!
+
+
+Minden részfeladatot először egyedül szeretnék megoldani. Utána kérd be a megoldásom és értékeld! Hibátlan megoldás esetén menjünk tovább, ha nem tudom, vagy hibás a megoldásom, vezess rá a megoldásra!

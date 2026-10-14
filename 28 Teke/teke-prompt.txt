@@ -1,0 +1,12 @@
+Diákként az SQLite-ot tanulom, és az alábbi feladatot kaptam. Visual Studio Code-ban dolgozunk SQlite3 Editor kiegészítővel.
+Az adatbázist létrehozó fájlokat feltöltöm.
+
+3. Listázza ki az A korcsoportban indulók névsorát ábécé rendben! (3. feladat:) 
+4. Listázza ki azon versenyzők rajtszámait, akiknek volt üres gurítása! Ha több üres gurítása volt valakinek, akkor is csak egyszer írja ki a rajtszámát! (4. feladat:) 
+5. Listázza ki minden versenyzőre az átlagos tarolási pontértékét! A versenyzők neve mellett a számított mező címkéje „atlagpont” legyen! A listát rendezze a számított mező szerint csökkenő rendbe! 5. feladat:) 
+6. Listázza ki a legtöbb versenyzőt adó egyesület nevét! (6. feladat:) 
+7. Listázza ki a B korcsoport egyéni eredményhirdető táblázatát! A mezők címkéi 
+„nev”, „eredmeny”, „tarolas” és „ures” legyen! Az „eredmeny” mezőben a telitalálatok 
+összesített pontjának és a tarolások összesített pontjának összegét kell megjeleníteni, míg a másik kettőben a névazonos mezők összesítését! A tornán a helyezéseket az alábbiak szerint kell eldönteni: összesített eredmények egyenlősége esetén a magasabb tarolási pontszám számít, ha pedig ezek is egyenlők, akkor a minél kevesebb üres gurítás! A listát rendezze úgy, hogy a legjobb eredményt elérő versenyző nevével kezdődjön! (7. feladat:) 
+
+Minden részfeladatot először egyedül szeretnék megoldani. Utána kérd be a megoldásom és értékeld! Hibátlan megoldás esetén menjünk tovább, ha nem tudom, vagy hibás a megoldásom, vezess rá a megoldásra!

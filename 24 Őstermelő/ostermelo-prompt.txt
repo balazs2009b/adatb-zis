@@ -1,0 +1,14 @@
+Diákként az SQLite-ot tanulom, és az alábbi feladatot kaptam. Visual Studio Code-ban dolgozunk SQlite3 Editor kiegészítővel.
+Az adatbázist létrehozó fájlokat feltöltöm.
+
+3. Készítsen lekérdezést, amely megadja, hogy az őstermelő mely településeken rendelkezik partnerekkel! A lekérdezésben minden település neve egyszer jelenjen meg ábécé rendben! 
+(3. feladat:)  
+4. Vácon az őstermelőnek egyelőre még csak egy partnere van. Listázza ki, hogy ennek a partnernek összesen hány alkalommal szállított az őstermelő gyümölcslét! A számított 
+mező címkéje „alkalmak” legyen! (4. feladat:) 
+5. Készítsen lekérdezést, amely megadja, hogy 2016. május hónapban a legnagyobb rendelést hány karton gyümölcslére adták le! Az egyetlen számított mező címkéje „legtobb” legyen! (5. feladat:) 
+6. Listázza ki, hogy mely településeken rendelkezik az őstermelő egynél több partnerrel! A listában csak a települések neve jelenjen meg! (6. feladat:) 
+7. Készítsen lekérdezést, ami megadja, hogy melyik 3 gyümölcslé volt a legnépszerűbb 
+terméke az őstermelőnek! (Egy kartonban 6 doboz gyümölcslé található.) A listában a 3 legtöbbet értékesített gyümölcslé neve és az összesített dobozszám szerepeljen dobozszám 
+szerint csökkenő sorrendben! A mezők címkéje „ital” és „doboz” legyen! (7. feladat:) 
+
+Minden részfeladatot először egyedül szeretnék megoldani. Utána kérd be a megoldásom és értékeld! Hibátlan megoldás esetén menjünk tovább, ha nem tudom, vagy hibás a megoldásom, vezess rá a megoldásra!

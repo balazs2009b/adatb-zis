@@ -1,0 +1,22 @@
+Diákként az SQLite-ot tanulom, és az alábbi feladatot kaptam. Visual Studio Code-ban dolgozunk SQlite3 Editor kiegészítővel.
+Az adatbázist létrehozó fájlokat feltöltöm.
+
+B. Június
+Készítsünk SQL parancsot, amely megadja, hogy június hónapban mely napon, melyik vevő, mit és milyen mennyiségben vásárolt és az egyes tételekért mennyit fizetett! 
+A lista legyen elsősorban a vásárlás napja, másodsorban a vevő neve szerint rendezve, mindkét szempont szerint növekvően!
+A vevok.nev mező vevo néven, a zoldsegek.nev mező aru néven, a számított mező pedig ar néven jelenjen meg a listában!
+Az SQL parancsot kimitvett.sql néven mentsük!
+C. Alma
+Készítsünk SQL parancsot lekérdezést, amely megadja, hogy melyik az a zöldséges, aki a legnagyobb mennyiséget adta el almából a nyár folyamán!
+A listában a zöldséges neve mellett jelenjen meg az eladott alma mennyisége is!
+A parancsott legtobbalma.sql néven mentsük!
+D. Tábla másolása
+Készítsünk másolatot a vevok adattábláról vevok2 néven! (masol.sql)
+E. Vásároltak
+Készítsünk SQL parancsot, amely kilistázza azoknak a vevőknek az azonosítóit a vevok2 táblából, akik a nyár folyamán vásároltak a piacon! Minden vásárló csak egyszer szerepeljen a listában! (vasaroltak.sql)
+F. Nem vásároltak
+Az előző parancsot felhasználva listázzuk ki azoknak a vevőknek a neveit, akik nem vásároltak a nyár folyamán a piacon! (nemvasaroltak.sql)
+G. Törlés
+Töröljük le a vevok2 táblából azokat a vevőket, akik nem vásároltak! Az előző feldat megoldását alakítsuk át! (torles.sql)
+
+Minden részfeladatot először egyedül szeretnék megoldani. Utána kérd be a megoldásom és értékeld! Hibátlan megoldás esetén menjünk tovább, ha nem tudom, vagy hibás a megoldásom, vezess rá a megoldásra!
