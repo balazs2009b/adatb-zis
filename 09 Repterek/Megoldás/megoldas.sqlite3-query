@@ -23,6 +23,11 @@
 -- A tököli reptér második pályájának hozzáadása.
 -- Az `az` mező INTEGER PRIMARY KEY, ezért automatikusan kap értéket (63),
 -- így a mezőket fel kell sorolni:
+-- Ez a törlés csak az újrafuttathatóságért kell: nélküle minden
+-- Run újabb Tököl-sort szúrna be (63 -> 64 -> 65 ...), hibaüzenet
+-- nélkül, csendben elrontva az adatokat.
+DELETE FROM palyak WHERE nev='Tököl' AND hossz=1100;
+
 INSERT INTO palyak (nev, hossz, szelesseg, anyag)
 VALUES ('Tököl', 1100, 50, 'fű');
 

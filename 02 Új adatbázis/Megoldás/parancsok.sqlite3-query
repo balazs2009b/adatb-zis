@@ -1,17 +1,20 @@
 -- database: koltok.db
 --
--- FIGYELEM: a mellette lévő adatbázis már TARTALMAZZA ennek a fájlnak
--- a végállapotát. Ha az egész fájlt újra lefuttatod, a tábla-létrehozó
--- és adatbevivő parancsok hibát adnak ("already exists" / "no such table").
--- Lépésenként futtasd a parancsokat, vagy kezdj egy üres adatbázissal!
+-- EZ A FÁJL A RUN GOMBBAL, EGYBEN FUTTATHATÓ, AKÁRHÁNYSZOR.
+-- Az elején eldobja és újraépíti a táblákat, ezért nem tud
+-- "already exists" vagy "UNIQUE constraint failed" hibát adni,
+-- és nem szaporítja az adatokat ismételt futtatáskor.
 --
 
 -- ==========================================================
 -- 2. Új adatbázis készítése
 -- ==========================================================
 
+-- --- Tiszta kiindulás (az újrafuttathatóságért) -----------
+DROP TABLE IF EXISTS evek;
+
 -- --- B. Tábla létrehozása ---------------------------------
-CREATE TABLE IF NOT EXISTS evek (
+CREATE TABLE evek (
     az INTEGER PRIMARY KEY,
     nev TEXT,
     szuletett INTEGER,

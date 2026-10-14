@@ -125,3 +125,43 @@ Ezek sorban készülnek, fejezetenként pusholva.
   közölt mintával** (3.: angol/francia/amerikai; 4.: Böszörményi 41, Dan Brown 41,
   Rowling 40; 5.: Gárdonyi 1, Molnár 2, Szabó Magda 3; 6.: Szabó Magda 5, majd a
   négykönyvesek ábécé rendben).
+
+## Minden parancsfájl újrafuttatható (Run gomb)
+
+Eredetileg a 02/03/07/09/13/14. fejezet fájljai csak lépésenként futtatva működtek,
+a fejlécükben figyelmeztetéssel. Ez a gyakorlatban nem elég: a Run gomb az **egész
+fájlt egyben** futtatja, és akkor elhasalnak. Két fajta hiba volt:
+
+- **Látható hiba:** `table ... already exists`, `UNIQUE constraint failed`,
+  `no such table: diakok` - a futás megszakad.
+- **Néma hiba (rosszabb):** a 09. fejezet `INSERT`-je hibaüzenet nélkül szúrt be
+  egy újabb Tököl-sort minden futtatáskor (63 -> 64 -> 65 ...), csendben elrontva
+  az adatokat.
+
+Javítás: minden érintett fájl az elején eldobja és újraépíti a tábláit
+(`DROP TABLE IF EXISTS`), illetve a beszúrás elé törlés került. A 13. fejezetben a
+szándékosan hibázó parancsok (ezeket tanítja a lecke) megjegyzésbe kerültek a
+pontos hibaüzenetükkel - azokat külön kell futtatni a sor melletti háromszöggel.
+
+**Ellenőrizve:** mind a 14 parancsfájl háromszor egymás után lefuttatva hibátlan,
+és a végállapot minden futtatás után ugyanaz:
+
+| Mappa | Végállapot 3 futtatás után |
+|---|---|
+| 01 Bevezetés | evek 10 |
+| 02 Új adatbázis | evek 11 |
+| 03 Táblák kezelése | evek 10, masolat 10 |
+| 04 Rendezés | evek 10, masolat 10 |
+| 05 Szűrés | top10 10 |
+| 06 Összegzés | top10 10 |
+| 07 Milliárdosok | adatok 5 |
+| 08 Színészek | szineszek 145 |
+| 09 Repterek | palyak 63 |
+| 10 Országok | adatok 88 |
+| 12 Több tábla | osztalyok 4, diakok 6 |
+| 13 Idegen kulcs | osztalyok 3, diakok 6, diakok3 4 |
+| 14 Maraton | futok 292, eredmenyek 312 |
+| 15 Nagy könyv | szerzo 103, konyv 153 |
+
+A leadandó `megoldasok.sql` / `megoldas.sql` / `feladat.sql` fájlok NEM változtak:
+azokban csak az marad, amit a feladat kér.

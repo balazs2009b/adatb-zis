@@ -1,32 +1,43 @@
 -- database: iskola.db
 --
--- FIGYELEM: a mellette lévő iskola.db már TARTALMAZZA a végállapotot:
--- osztalyok 4, diakok 6, diakok2 6, diakok3 6 sor. A tábla-létrehozó
--- parancsok újbóli futtatása "already exists" hibát ad. Lépésenként
--- futtasd a parancsokat (a sor melletti kis nyíllal)!
---
--- ============================================================
--- KÉT HIBA A TANANYAGBAN - ezek nélkül a lecke nem működik:
---
--- 1) Az SQLite-ban az idegen kulcs alapértelmezésben KI VAN KAPCSOLVA.
---    PRAGMA foreign_keys = ON nélkül a C. és D. pont hibaüzenetei NEM
---    jönnek: a hibás INSERT simán lefut, mintha nem is lenne idegen
---    kulcs. A lecke ezt nem említi. Minden kapcsolatnál újra be kell
---    kapcsolni, mert nem tárolódik az adatbázisban.
---
--- 2) A D. pont azt írja az 1A -> 1C átnevezésről: "Ez működik!"
---    NEM működik, amíg a C. pontban készített diakok2 tábla létezik:
---    annak idegen kulcsa RESTRICT (alapértelmezett), és az blokkolja.
---    A kaszkádoláshoz előbb DROP TABLE diakok2; kell. Lásd a D. pontnál.
--- ============================================================
+-- EZ A FÁJL A RUN GOMBBAL, EGYBEN FUTTATHATÓ, AKÁRHÁNYSZOR.
+-- Az elején mindent eldob és újraépít, ezért nem tud "already exists"
+-- hibát adni. A szándékosan hibázó parancsok megjegyzésben vannak,
+-- mellettük a pontos hibaüzenet - azokat külön, a sor melletti kis
+-- háromszöggel próbáld ki, mert egy Run-t megszakítanának.
 
 -- ==========================================================
 -- 13. Idegen kulcsok
 -- ==========================================================
--- Az adatbázis a 12. leckéből származik:
---     sqlite3 iskola.db < iskola.sql
 
--- --- A. Előkészületek -------------------------------------
+-- --- Tiszta kiindulás -------------------------------------
+DROP TABLE IF EXISTS diakok3;
+DROP TABLE IF EXISTS diakok2;
+DROP TABLE IF EXISTS diakok;
+DROP TABLE IF EXISTS osztalyok;
+
+CREATE TABLE osztalyok (
+  osztaly TEXT PRIMARY KEY,
+  of TEXT
+);
+INSERT INTO osztalyok VALUES ('1A','Nagy Andrea');
+INSERT INTO osztalyok VALUES ('1B','Kovács Edit');
+INSERT INTO osztalyok VALUES ('2A','Tóth Lajos');
+INSERT INTO osztalyok VALUES ('2B','Kovács Géza');
+
+CREATE TABLE diakok (
+  az INTEGER PRIMARY KEY,
+  nev TEXT,
+  osztaly TEXT,
+  atlag REAL
+);
+INSERT INTO diakok VALUES (1,'Kiss László','1A',3.25);
+INSERT INTO diakok VALUES (2,'Kádár Judit','1A',4.68);
+INSERT INTO diakok VALUES (3,'Szűcs János','1B',3.55);
+INSERT INTO diakok VALUES (4,'Boros Ilona','1B',2.35);
+INSERT INTO diakok VALUES (5,'Szabó Sándor','2A',4.1);
+INSERT INTO diakok VALUES (6,'Koltai Judit','2A',4.4);
+
 SELECT * FROM osztalyok;
 -- Eredmény: 1A Nagy Andrea, 1B Kovács Edit, 2A Tóth Lajos, 2B Kovács Géza
 
@@ -37,7 +48,7 @@ SELECT * FROM diakok;
 
 -- Idegen kulcs nélkül bevihető olyan diák, akihez nincs osztály:
 INSERT INTO diakok VALUES (7, 'Nagy Tibor', '3A', 2.22);
--- Lefut, pedig 3A osztály nem létezik.
+-- Lefut, pedig 3A osztály nem létezik. EZ A PROBLÉMA.
 
 -- Ki Nagy Tibor osztályfőnöke?
 SELECT of FROM osztalyok
@@ -64,21 +75,28 @@ CREATE TABLE diakok2 (
 INSERT INTO diakok2 SELECT * FROM diakok;
 -- 6 sor került át.
 
--- !!! EZ A SOR KELL, KÜLÖNBEN NINCS HIBAÜZENET !!!
+-- !!! A TANANYAG 1. HIÁNYA: EZ A SOR KELL, KÜLÖNBEN NINCS HIBAÜZENET !!!
+-- Az SQLite-ban az idegen kulcs alapértelmezésben KI VAN KAPCSOLVA.
+-- E nélkül a lenti három parancs mind simán lefutna, mintha nem is
+-- lenne idegen kulcs. A beállítás nem tárolódik az adatbázisban,
+-- minden új kapcsolatnál újra meg kell adni.
 PRAGMA foreign_keys = ON;
 
--- 1. próba: 3A osztályos tanuló bevitele
-INSERT INTO diakok2 VALUES (7, 'Nagy Tibor', '3A', 2.22);
--- HIBA: FOREIGN KEY constraint failed
--- (PRAGMA foreign_keys = ON nélkül ez LEFUTNA - lásd a fejlécet.)
-
--- 2. próba: az 1A osztály átnevezése
-UPDATE osztalyok SET osztaly = '1C' WHERE osztaly = '1A';
--- HIBA: FOREIGN KEY constraint failed - vannak 1A-s diákok.
-
--- 3. próba: az 1A osztály törlése
-DELETE FROM osztalyok WHERE osztaly = '1A';
--- HIBA: FOREIGN KEY constraint failed - ugyanezért.
+-- A három próba - MINDHÁROM SZÁNDÉKOSAN HIBÁT AD, ezért megjegyzésben
+-- van. Külön-külön futtasd őket a sor melletti kis háromszöggel!
+--
+--   INSERT INTO diakok2 VALUES (7, 'Nagy Tibor', '3A', 2.22);
+--     -> FOREIGN KEY constraint failed
+--        Nincs 3A osztály, ezért nem vihető be a diák.
+--
+--   UPDATE osztalyok SET osztaly = '1C' WHERE osztaly = '1A';
+--     -> FOREIGN KEY constraint failed
+--        Vannak 1A-s diákok, ezért nem nevezhető át az osztály.
+--
+--   DELETE FROM osztalyok WHERE osztaly = '1A';
+--     -> FOREIGN KEY constraint failed
+--        Ugyanezért nem törölhető.
+--
 -- Ez a RESTRICT (alapértelmezett) viselkedés: tiltás.
 
 -- --- D. Kaszkádolt frissítés és törlés --------------------
@@ -97,14 +115,17 @@ CREATE TABLE diakok3 (
 INSERT INTO diakok3 SELECT * FROM diakok;
 -- 6 sor került át.
 
--- A 3A-s tanuló bevitele továbbra sem megy (a CASCADE csak a szülő
--- tábla módosítására/törlésére vonatkozik, a hibás hivatkozásra nem):
-INSERT INTO diakok3 VALUES (7, 'Nagy Tibor', '3A', 2.22);
--- HIBA: FOREIGN KEY constraint failed
+-- A 3A-s tanuló bevitele ide sem megy (a CASCADE a szülő tábla
+-- módosítására/törlésére vonatkozik, nem a hibás hivatkozásra).
+-- SZÁNDÉKOS HIBA, külön futtasd:
+--   INSERT INTO diakok3 VALUES (7, 'Nagy Tibor', '3A', 2.22);
+--     -> FOREIGN KEY constraint failed
 
--- !!! A TANANYAG 2. HIBÁJA ITT VAN !!!
--- A lecke szerint most "működik" az átnevezés. NEM működik, mert a
--- diakok2 tábla RESTRICT idegen kulcsa blokkolja. Ellenőrizve:
+-- !!! A TANANYAG 2. HIBÁJA !!!
+-- A lecke szerint most "működik" az 1A -> 1C átnevezés. NEM működik,
+-- amíg a C. pontban készített diakok2 tábla létezik: annak idegen
+-- kulcsa RESTRICT, és az blokkolja a szülő módosítását. A diakok3
+-- CASCADE-je ezen nem segít. Ellenőrizve:
 --     diakok2 megvan  -> UPDATE: FOREIGN KEY constraint failed
 --     diakok2 eldobva -> UPDATE lefut és kaszkádol
 -- Ezért előbb el kell dobni:
@@ -135,3 +156,9 @@ SELECT nev, osztaly FROM diakok3;
 -- ON UPDATE CASCADE: a kulcs változása átvezetődik a gyerek táblába.
 -- ON DELETE CASCADE: a szülő törlése törli a gyerek sorokat is.
 -- Mindhez kell: PRAGMA foreign_keys = ON;
+--
+-- A fájl végén az adatbázis állapota:
+--   osztalyok 3 sor (1B, 2A, 2B - az 1A/1C törölve)
+--   diakok    6 sor (érintetlen, nincs rajta idegen kulcs)
+--   diakok3   4 sor (a két 1C-s diák kaszkádolva törlődött)
+--   diakok2   nincs (a D. ponthoz el kellett dobni)

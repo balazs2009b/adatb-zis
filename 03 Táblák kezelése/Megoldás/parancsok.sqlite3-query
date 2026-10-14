@@ -1,14 +1,39 @@
 -- database: koltok.db
 --
--- FIGYELEM: a mellette lévő adatbázis már TARTALMAZZA ennek a fájlnak
--- a végállapotát. Ha az egész fájlt újra lefuttatod, a tábla-létrehozó
--- és adatbevivő parancsok hibát adnak ("already exists" / "no such table").
--- Lépésenként futtasd a parancsokat, vagy kezdj egy üres adatbázissal!
+-- EZ A FÁJL A RUN GOMBBAL, EGYBEN FUTTATHATÓ, AKÁRHÁNYSZOR.
+-- Az elején eldobja és újraépíti a táblákat, ezért nem tud
+-- "already exists" vagy "UNIQUE constraint failed" hibát adni,
+-- és nem szaporítja az adatokat ismételt futtatáskor.
 --
 
 -- ==========================================================
 -- 3. Táblák kezelése
 -- ==========================================================
+
+-- --- Tiszta kiindulás (az újrafuttathatóságért) -----------
+-- A 2. lecke végállapotát állítja vissza: evek 11 sorral,
+-- Juhász Gyula évszámai még üresek.
+DROP TABLE IF EXISTS masolat;
+DROP TABLE IF EXISTS evek2;
+DROP TABLE IF EXISTS evek;
+
+CREATE TABLE evek (
+    az INTEGER PRIMARY KEY,
+    nev TEXT,
+    szuletett INTEGER,
+    meghalt INTEGER
+  );
+INSERT INTO evek VALUES(1,'Ady Endre',1877,1919);
+INSERT INTO evek VALUES(2,'Arany János',1817,1882);
+INSERT INTO evek VALUES(3,'Babits Mihály',1883,1941);
+INSERT INTO evek VALUES(4,'Csokonai Vitéz Mihály',1773,1805);
+INSERT INTO evek VALUES(5,'Illyés Gyula',1902,1983);
+INSERT INTO evek VALUES(6,'József Attila',1905,1937);
+INSERT INTO evek VALUES(7,'Kölcsey Ferenc',1790,1838);
+INSERT INTO evek VALUES(8,'Petőfi Sándor',1823,1849);
+INSERT INTO evek VALUES(9,'Radnóti Miklós',1909,1944);
+INSERT INTO evek VALUES(10,'Tóth Árpád',1886,1928);
+INSERT INTO evek(nev) VALUES('Juhász Gyula');
 
 -- --- B. Sorok listázása -----------------------------------
 SELECT * FROM evek;

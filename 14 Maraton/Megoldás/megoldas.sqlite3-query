@@ -1,9 +1,10 @@
 -- database: maratonvalto.db
 --
--- FIGYELEM: a mellette lévő maratonvalto.db már TARTALMAZZA a
--- végállapotot, benne a 3. feladat beszúrásával (eredmenyek 312 sor).
--- A 3. feladat INSERT-jét ne futtasd újra: a (futo, kor) páros
--- elsődleges kulcs, ezért "UNIQUE constraint failed" hibát adna.
+-- EZ A FÁJL A RUN GOMBBAL, EGYBEN FUTTATHATÓ, AKÁRHÁNYSZOR.
+-- A 3. feladat INSERT-je elé egy törlés került, különben a második
+-- futtatáskor "UNIQUE constraint failed" hibát adna, mert a
+-- (futo, kor) páros elsődleges kulcs. A leadandó megoldasok.sql-ben
+-- ez a törlés NINCS benne - oda csak a feladat kérte INSERT kell.
 -- A tablak.sql / adatok.sql az EGYSZER lefutó építő parancsfájlok.
 --
 -- A leadandó fájl a megoldasok.sql - a javítás során csak azt
@@ -20,6 +21,10 @@
 
 -- --- 3. feladat -------------------------------------------
 -- Tóth Antal (1044) 4. körös, 15 765 másodperces köridejének rögzítése.
+-- Ez a törlés csak azért kell, hogy a fájl újra is futtatható legyen.
+-- A leadandó megoldasok.sql-be NE másold bele!
+DELETE FROM eredmenyek WHERE futo=1044 AND kor=4;
+
 INSERT INTO eredmenyek (futo, kor, ido) VALUES (1044, 4, 15765);
 -- Megjegyzés: Tóth Antalnak ezelőtt EGYETLEN eredménye sem volt a
 -- táblában, nem csak a 4. köre hiányzott.
