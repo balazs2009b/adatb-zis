@@ -1,0 +1,98 @@
+-- database: koltok.db
+--
+-- EZ A FÁJL A RUN GOMBBAL, EGYBEN FUTTATHATÓ, AKÁRHÁNYSZOR.
+-- Az elején eldobja és újraépíti a táblákat, ezért nem tud
+-- "already exists" vagy "UNIQUE constraint failed" hibát adni,
+-- és nem szaporítja az adatokat ismételt futtatáskor.
+--
+
+-- ==========================================================
+-- 3. Táblák kezelése
+-- ==========================================================
+
+-- --- Tiszta kiindulás (az újrafuttathatóságért) -----------
+-- A 2. lecke végállapotát állítja vissza: evek 11 sorral,
+-- Juhász Gyula évszámai még üresek.
+DROP TABLE IF EXISTS masolat;
+DROP TABLE IF EXISTS evek2;
+DROP TABLE IF EXISTS evek;
+
+CREATE TABLE evek (
+    az INTEGER PRIMARY KEY,
+    nev TEXT,
+    szuletett INTEGER,
+    meghalt INTEGER
+  );
+INSERT INTO evek VALUES(1,'Ady Endre',1877,1919);
+INSERT INTO evek VALUES(2,'Arany János',1817,1882);
+INSERT INTO evek VALUES(3,'Babits Mihály',1883,1941);
+INSERT INTO evek VALUES(4,'Csokonai Vitéz Mihály',1773,1805);
+INSERT INTO evek VALUES(5,'Illyés Gyula',1902,1983);
+INSERT INTO evek VALUES(6,'József Attila',1905,1937);
+INSERT INTO evek VALUES(7,'Kölcsey Ferenc',1790,1838);
+INSERT INTO evek VALUES(8,'Petőfi Sándor',1823,1849);
+INSERT INTO evek VALUES(9,'Radnóti Miklós',1909,1944);
+INSERT INTO evek VALUES(10,'Tóth Árpád',1886,1928);
+INSERT INTO evek(nev) VALUES('Juhász Gyula');
+
+-- --- B. Sorok listázása -----------------------------------
+SELECT * FROM evek;
+
+SELECT nev,szuletett FROM evek;
+
+SELECT nev,szuletett FROM evek WHERE szuletett<1900;
+-- Hány ilyen költő van?  ->  7 db
+-- (Arany, Csokonai, Kölcsey, Petőfi, Tóth Árpád, Ady, Babits;
+--  Juhász Gyula évszámai ekkor még üresek, ezért ő nem szerepel benne.)
+
+-- Gyakorlás: akik 1900 után haltak meg
+SELECT nev FROM evek WHERE meghalt>1900;
+-- Eredmény: Ady Endre, Babits Mihály, Illyés Gyula, József Attila,
+--           Radnóti Miklós, Tóth Árpád  ->  6 db
+-- (Juhász Gyula csak a lenti UPDATE után kerül bele, akkor már 7 db.)
+
+SELECT * FROM evek WHERE nev='Radnóti Miklós';
+
+-- --- C. Sorok módosítása, törlése -------------------------
+UPDATE evek SET szuletett=1883,meghalt=1937 WHERE nev='Juhász Gyula';
+
+DELETE FROM evek WHERE az=4;   -- Csokonai Vitéz Mihály
+
+SELECT * FROM evek;
+
+-- --- D. Tábla másolása ------------------------------------
+CREATE TABLE evek2 (
+  az INTEGER PRIMARY KEY,
+  nev TEXT,
+  szuletett INTEGER,
+  meghalt INTEGER
+);
+
+-- FIGYELEM: a tananyagban elírás van, ott "FROM evek2" szerepel.
+-- Helyesen az EREDETI táblából kell másolni:
+INSERT INTO evek2 (az, nev, szuletett, meghalt)
+SELECT az, nev, szuletett, meghalt
+FROM evek;
+
+-- --- E. Új oszlop (mező) hozzáadása -----------------------
+ALTER TABLE evek2 ADD COLUMN hely TEXT;
+
+UPDATE evek2 SET hely='Szeged' WHERE nev='Juhász Gyula';
+
+-- --- F. Tábla átnevezése ----------------------------------
+ALTER TABLE evek2 RENAME TO masolat;
+
+SELECT * FROM masolat;
+
+
+-- ==========================================================
+-- G. Feladat - melyik parancs mire való?
+-- ==========================================================
+--
+--   CREATE TABLE  ->  Új tábla létrehozása.
+--   ALTER TABLE   ->  Tábla átnevezése vagy új oszlop megadása.
+--   DROP TABLE    ->  Tábla törlése.
+--   INSERT INTO   ->  Új sor hozzáadása a táblához.
+--   UPDATE        ->  Megadott sor módosítása.
+--   DELETE FROM   ->  Megadott sorok törlése a táblából.
+--   SELECT        ->  Tábla megadott sorainak listázása.

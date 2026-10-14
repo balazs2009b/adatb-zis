@@ -1,0 +1,164 @@
+-- database: iskola.db
+--
+-- EZ A FÁJL A RUN GOMBBAL, EGYBEN FUTTATHATÓ, AKÁRHÁNYSZOR.
+-- Az elején mindent eldob és újraépít, ezért nem tud "already exists"
+-- hibát adni. A szándékosan hibázó parancsok megjegyzésben vannak,
+-- mellettük a pontos hibaüzenet - azokat külön, a sor melletti kis
+-- háromszöggel próbáld ki, mert egy Run-t megszakítanának.
+
+-- ==========================================================
+-- 13. Idegen kulcsok
+-- ==========================================================
+
+-- --- Tiszta kiindulás -------------------------------------
+DROP TABLE IF EXISTS diakok3;
+DROP TABLE IF EXISTS diakok2;
+DROP TABLE IF EXISTS diakok;
+DROP TABLE IF EXISTS osztalyok;
+
+CREATE TABLE osztalyok (
+  osztaly TEXT PRIMARY KEY,
+  of TEXT
+);
+INSERT INTO osztalyok VALUES ('1A','Nagy Andrea');
+INSERT INTO osztalyok VALUES ('1B','Kovács Edit');
+INSERT INTO osztalyok VALUES ('2A','Tóth Lajos');
+INSERT INTO osztalyok VALUES ('2B','Kovács Géza');
+
+CREATE TABLE diakok (
+  az INTEGER PRIMARY KEY,
+  nev TEXT,
+  osztaly TEXT,
+  atlag REAL
+);
+INSERT INTO diakok VALUES (1,'Kiss László','1A',3.25);
+INSERT INTO diakok VALUES (2,'Kádár Judit','1A',4.68);
+INSERT INTO diakok VALUES (3,'Szűcs János','1B',3.55);
+INSERT INTO diakok VALUES (4,'Boros Ilona','1B',2.35);
+INSERT INTO diakok VALUES (5,'Szabó Sándor','2A',4.1);
+INSERT INTO diakok VALUES (6,'Koltai Judit','2A',4.4);
+
+SELECT * FROM osztalyok;
+-- Eredmény: 1A Nagy Andrea, 1B Kovács Edit, 2A Tóth Lajos, 2B Kovács Géza
+
+SELECT * FROM diakok;
+-- Eredmény: 6 diák (1A: 2, 1B: 2, 2A: 2)
+
+-- --- B. Hibás kapcsolatok ---------------------------------
+
+-- Idegen kulcs nélkül bevihető olyan diák, akihez nincs osztály:
+INSERT INTO diakok VALUES (7, 'Nagy Tibor', '3A', 2.22);
+-- Lefut, pedig 3A osztály nem létezik. EZ A PROBLÉMA.
+
+-- Ki Nagy Tibor osztályfőnöke?
+SELECT of FROM osztalyok
+JOIN diakok ON osztalyok.osztaly = diakok.osztaly
+WHERE nev = 'Nagy Tibor';
+-- Eredmény: 0 sor - nincs osztályfőnöke. Ez a hibás kapcsolat.
+
+-- Töröld a hibás sort:
+DELETE FROM diakok WHERE nev LIKE 'Nagy T%';
+-- A diakok tábla újra 6 soros.
+
+-- --- C. Idegen kulcsok ------------------------------------
+
+-- Az SQLite-ban idegen kulcsot utólag nem lehet hozzáadni, ezért
+-- új tábla kell. (ALTER TABLE ... ADD FOREIGN KEY nincs.)
+CREATE TABLE diakok2 (
+  az INTEGER PRIMARY KEY,
+  nev TEXT,
+  osztaly TEXT,
+  atlag REAL,
+  FOREIGN KEY (osztaly) REFERENCES osztalyok(osztaly)
+);
+
+INSERT INTO diakok2 SELECT * FROM diakok;
+-- 6 sor került át.
+
+-- !!! A TANANYAG 1. HIÁNYA: EZ A SOR KELL, KÜLÖNBEN NINCS HIBAÜZENET !!!
+-- Az SQLite-ban az idegen kulcs alapértelmezésben KI VAN KAPCSOLVA.
+-- E nélkül a lenti három parancs mind simán lefutna, mintha nem is
+-- lenne idegen kulcs. A beállítás nem tárolódik az adatbázisban,
+-- minden új kapcsolatnál újra meg kell adni.
+PRAGMA foreign_keys = ON;
+
+-- A három próba - MINDHÁROM SZÁNDÉKOSAN HIBÁT AD, ezért megjegyzésben
+-- van. Külön-külön futtasd őket a sor melletti kis háromszöggel!
+--
+--   INSERT INTO diakok2 VALUES (7, 'Nagy Tibor', '3A', 2.22);
+--     -> FOREIGN KEY constraint failed
+--        Nincs 3A osztály, ezért nem vihető be a diák.
+--
+--   UPDATE osztalyok SET osztaly = '1C' WHERE osztaly = '1A';
+--     -> FOREIGN KEY constraint failed
+--        Vannak 1A-s diákok, ezért nem nevezhető át az osztály.
+--
+--   DELETE FROM osztalyok WHERE osztaly = '1A';
+--     -> FOREIGN KEY constraint failed
+--        Ugyanezért nem törölhető.
+--
+-- Ez a RESTRICT (alapértelmezett) viselkedés: tiltás.
+
+-- --- D. Kaszkádolt frissítés és törlés --------------------
+
+CREATE TABLE diakok3 (
+  az INTEGER PRIMARY KEY,
+  nev TEXT,
+  osztaly TEXT,
+  atlag REAL,
+  FOREIGN KEY (osztaly)
+    REFERENCES osztalyok(osztaly)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+);
+
+INSERT INTO diakok3 SELECT * FROM diakok;
+-- 6 sor került át.
+
+-- A 3A-s tanuló bevitele ide sem megy (a CASCADE a szülő tábla
+-- módosítására/törlésére vonatkozik, nem a hibás hivatkozásra).
+-- SZÁNDÉKOS HIBA, külön futtasd:
+--   INSERT INTO diakok3 VALUES (7, 'Nagy Tibor', '3A', 2.22);
+--     -> FOREIGN KEY constraint failed
+
+-- !!! A TANANYAG 2. HIBÁJA !!!
+-- A lecke szerint most "működik" az 1A -> 1C átnevezés. NEM működik,
+-- amíg a C. pontban készített diakok2 tábla létezik: annak idegen
+-- kulcsa RESTRICT, és az blokkolja a szülő módosítását. A diakok3
+-- CASCADE-je ezen nem segít. Ellenőrizve:
+--     diakok2 megvan  -> UPDATE: FOREIGN KEY constraint failed
+--     diakok2 eldobva -> UPDATE lefut és kaszkádol
+-- Ezért előbb el kell dobni:
+DROP TABLE diakok2;
+
+-- Most már működik az átnevezés, és kaszkádol a diakok3-ba:
+UPDATE osztalyok SET osztaly = '1C' WHERE osztaly = '1A';
+-- Lefut. KÉRDÉS: mi változott a diákok táblában?
+-- VÁLASZ: Kiss László és Kádár Judit osztálya 1A-ról 1C-re változott
+-- a diakok3-ban, magától. Ez az ON UPDATE CASCADE.
+
+SELECT nev, osztaly FROM diakok3 WHERE osztaly = '1C';
+-- Eredmény: Kiss László 1C, Kádár Judit 1C
+
+-- Végül töröld az 1C osztályt:
+DELETE FROM osztalyok WHERE osztaly = '1C';
+-- Lefut. KÉRDÉS: mi történt az 1C-be járó diákokkal?
+-- VÁLASZ: TÖRLŐDTEK. A diakok3 6 sorról 4-re csökkent, Kiss László és
+-- Kádár Judit eltűnt. Ez az ON DELETE CASCADE - és ezért veszélyes:
+-- egy osztály törlése csendben vitte a diákokat is.
+
+SELECT nev, osztaly FROM diakok3;
+-- Eredmény: 4 sor (Szűcs János 1B, Boros Ilona 1B,
+--                  Szabó Sándor 2A, Koltai Judit 2A)
+
+-- --- Összefoglalás ----------------------------------------
+-- RESTRICT (alapértelmezett): tiltja a szülő módosítását/törlését.
+-- ON UPDATE CASCADE: a kulcs változása átvezetődik a gyerek táblába.
+-- ON DELETE CASCADE: a szülő törlése törli a gyerek sorokat is.
+-- Mindhez kell: PRAGMA foreign_keys = ON;
+--
+-- A fájl végén az adatbázis állapota:
+--   osztalyok 3 sor (1B, 2A, 2B - az 1A/1C törölve)
+--   diakok    6 sor (érintetlen, nincs rajta idegen kulcs)
+--   diakok3   4 sor (a két 1C-s diák kaszkádolva törlődött)
+--   diakok2   nincs (a D. ponthoz el kellett dobni)
