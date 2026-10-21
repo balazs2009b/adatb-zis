@@ -1,0 +1,94 @@
+-- database: kiralyok.db
+--
+-- EZ A FAJL A RUN GOMBBAL, EGYBEN FUTTATHATO, AKARHANYSZOR.
+-- Csak lekerdezeseket tartalmaz.
+-- A leadando fajlok kulon vannak, a feladat altal kert neven:
+--   2nevek.sql  3arpad.sql  4koran.sql  5XVII.sql
+--   6hosszu.sql  7fiatal.sql  8tobbszor.sql  9hazak.sql
+--
+-- ============================================================
+-- FONTOS: AZ EREDETI kiralyokforras.sql NEM FUTTATHATO!
+-- Az uralkodo tablaban ket oszlopnal CSONKA a COLLATE megadas:
+--     nev TEXT COLLATE NOT NULL
+--     ragnev TEXT COLLATE DEFAULT NULL
+-- A COLLATE utan hianyzik a rendezes neve (a MySQL-rol valo atirasnal
+-- csak a nevet toroltek). Hibauzenet: near NOT: syntax error, es az
+-- uralkodo tabla letre sem jon. A mellette levo JAVITOTT fajl ezt
+-- kijavitja; a tablak szerkezete es az adatok valtozatlanok.
+-- ============================================================
+
+-- ==========================================================
+-- 32. Magyar kiralyok
+-- ==========================================================
+-- uralkodo(azon, nev, ragnev, szul, hal, uhaz_az)   53 sor
+-- hivatal(azon, uralkodo_az, mettol, meddig, koronazas)  55 sor
+--   Egy uralkodonak tobb hivatali ideje is lehet.
+-- uralkodohaz(azon, nev)                            10 sor
+
+-- --- 2. feladat -------------------------------------------
+SELECT nev, ragnev FROM uralkodo WHERE ragnev IS NOT NULL ORDER BY szul;
+-- Eredmeny: 29 kiraly az 53-bol. Elso: I. Istvan (Szent Istvan).
+
+-- --- 3. feladat -------------------------------------------
+SELECT uralkodo.nev, hivatal.mettol, hivatal.meddig
+FROM uralkodo
+JOIN hivatal ON uralkodo.azon = hivatal.uralkodo_az
+JOIN uralkodohaz ON uralkodo.uhaz_az = uralkodohaz.azon
+WHERE uralkodohaz.nev = 'Árpád-ház'
+ORDER BY hivatal.mettol;
+-- Eredmeny: 22 sor 21 szemelyhez - Peter ketszer szerepel
+-- (1038-1041 es 1044-1046), ahogy a feladat keri.
+
+-- --- 4. feladat -------------------------------------------
+-- A koronazas lehet NULL (nem koronaztak meg), azt ki kell zarni.
+SELECT DISTINCT uralkodo.nev
+FROM uralkodo
+JOIN hivatal ON uralkodo.azon = hivatal.uralkodo_az
+WHERE hivatal.koronazas IS NOT NULL AND hivatal.mettol < hivatal.koronazas;
+-- Eredmeny: 9 kiraly - Samuel, I. Geza, I. Laszlo, III. Bela, ...
+
+-- --- 5. feladat -------------------------------------------
+-- Ket idoszak akkor fed at, ha az egyik kezdete nem kesobbi a masik
+-- vegenel ES forditva. Elegendo a hivatal tablabol szamolni, mert a
+-- feladat szerint ebben az idoszakban mindenki csak egyszer uralkodott.
+SELECT count(*)
+FROM hivatal
+WHERE mettol <= 1700 AND meddig >= 1601;
+-- Eredmeny: 6 kiraly.
+
+-- --- 6. feladat -------------------------------------------
+-- A feladat peldaja adja meg a kepletet: I. Istvan 1000-1038 = 39 ev,
+-- tehat meddig - mettol + 1, nem puszta kivonas.
+SELECT uralkodo.nev, hivatal.meddig - hivatal.mettol + 1 AS evek
+FROM uralkodo
+JOIN hivatal ON uralkodo.azon = hivatal.uralkodo_az
+ORDER BY evek DESC
+LIMIT 1;
+-- Eredmeny: I. Ferenc Jozsef, 69 ev (1848-1916).
+-- Nincs holtverseny: a masodik Zsigmond 51 evvel.
+
+-- --- 7. feladat -------------------------------------------
+SELECT uralkodo.nev, hivatal.mettol - uralkodo.szul AS kor
+FROM uralkodo
+JOIN hivatal ON uralkodo.azon = hivatal.uralkodo_az
+WHERE hivatal.mettol - uralkodo.szul < 15
+ORDER BY kor;
+-- Eredmeny: 10 kiraly. A legfiatalabbak: V. Laszlo es II. Janos
+-- 0 evesen (szuletesuk eveben), III. Laszlo 4, Salamon 10 evesen.
+
+-- --- 8. feladat -------------------------------------------
+SELECT uralkodo.nev, sum(hivatal.meddig - hivatal.mettol + 1) AS ossz
+FROM uralkodo
+JOIN hivatal ON uralkodo.azon = hivatal.uralkodo_az
+GROUP BY uralkodo.azon, uralkodo.nev
+HAVING count(*) > 1;
+-- Eredmeny: 2 kiraly - Peter 7 ev, Maria 14 ev osszesen.
+
+-- --- 9. feladat -------------------------------------------
+SELECT uralkodohaz.nev, count(DISTINCT uralkodo.azon) AS db
+FROM uralkodohaz
+JOIN uralkodo ON uralkodohaz.azon = uralkodo.uhaz_az
+GROUP BY uralkodohaz.azon, uralkodohaz.nev
+ORDER BY db DESC;
+-- Eredmeny: 10 haz. Arpad-haz 21, Habsburg-haz 13,
+-- Habsburg-Lotaringiai-haz 6, Anjou-haz 4 uralkodoval.

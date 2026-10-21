@@ -1,0 +1,73 @@
+-- database: forma1.db
+--
+-- EZ A FAJL A RUN GOMBBAL, EGYBEN FUTTATHATO, AKARHANYSZOR.
+-- Az index letrehozasa ele eldobas kerult. A torles es a javitas
+-- masodszor mar 0 sort erint, ezert nem ad hibat.
+-- A leadando megoldasok.sql-ben az index eldobasa NINCS benne.
+
+-- ==========================================================
+-- 34. Forma-1, 2015-os evad
+-- ==========================================================
+-- csapatok(csazon, csnev)                       10 sor
+-- pilotak(pazon, pnev, szev, csapat)            22 sor
+-- versenyek(vkod, datum, vnev, hely, kor, hossz)  20 -> 19 sor
+--   kor = korok szama, hossz = egy kor hossza METERBEN
+-- eredmenyek(pilota, nagydij, startpoz, celpoz)  418 sor
+--   celpoz NULL, ha a pilota nem ert celba
+
+-- --- 3. feladat -------------------------------------------
+DROP INDEX IF EXISTS pnev_index;
+CREATE INDEX pnev_index ON pilotak(pnev);
+
+-- --- 4. feladat: nem kell megoldani. ----------------------
+
+-- --- 5. feladat -------------------------------------------
+-- A Nemet Nagydijat torolni kell a versenynaptarbol.
+DELETE FROM versenyek WHERE vnev = 'Német Nagydíj';
+-- A versenyek tabla 20 sorrol 19-re csokken.
+-- (Erdekes: a torolt rekordban a hely erteke 'TBD' volt, vagyis
+--  meg nem dolt el a helyszin - osszhangban azzal, hogy torolték.)
+
+-- --- 6. feladat -------------------------------------------
+UPDATE versenyek SET hely = 'Sao Paulo' WHERE vnev = 'Brazil Nagydíj';
+
+SELECT vkod, vnev, hely FROM versenyek WHERE vnev = 'Brazil Nagydíj';
+-- Eredmeny: BRA | Brazil Nagydij | Sao Paulo
+-- (Elotte tevesen 'Rio de Janeiro' szerepelt.)
+
+-- --- 7. feladat -------------------------------------------
+-- Gyozelem = celpoz 1.
+SELECT pilotak.pnev, count(*) AS gyozelmek
+FROM pilotak
+JOIN eredmenyek ON pilotak.pazon = eredmenyek.pilota
+WHERE eredmenyek.celpoz = 1
+GROUP BY pilotak.pazon, pilotak.pnev
+ORDER BY gyozelmek DESC
+LIMIT 1;
+-- Eredmeny: Lewis Hamilton, 11 gyozelem.
+
+-- --- 8. feladat -------------------------------------------
+-- A hossz METERBEN van, ezert a kepletben /1000 all. A 1000.0 azert
+-- fontos, mert az 1000 egesz osztast adna, es levagna a tizedeseket.
+SELECT vnev, kor * hossz / 1000.0 AS tav
+FROM versenyek
+ORDER BY tav DESC;
+-- Eredmeny: 19 verseny. A leghosszabb a Mexikoi Nagydij 316.02 km,
+-- utana a Malaj 310.408 km es a Szingapuri 309.453 km.
+
+-- --- 9. feladat -------------------------------------------
+-- A legfiatalabb = a legkesobb szuletett, ezert szev szerint
+-- CSOKKENO a rendezes (az eletkor igy novekvo).
+-- A legjobb helyezes a legkisebb celpoz -> min().
+-- LEFT JOIN, hogy az is szerepeljen, akinek nincs eredmenye.
+SELECT pilotak.pnev, pilotak.szev, csapatok.csnev, min(eredmenyek.celpoz) AS legjobb
+FROM pilotak
+JOIN csapatok ON pilotak.csapat = csapatok.csazon
+LEFT JOIN eredmenyek ON pilotak.pazon = eredmenyek.pilota
+GROUP BY pilotak.pazon, pilotak.pnev, pilotak.szev, csapatok.csnev
+ORDER BY pilotak.szev DESC
+LIMIT 3;
+-- Eredmeny:
+--   Max Verstappen    1997  STR Renault        legjobb 6.
+--   Carlos Sainz Jnr  1994  STR Renault        legjobb 5.
+--   Daniil Kvyat      1994  Red Bull Renault   legjobb 4.
