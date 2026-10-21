@@ -1,0 +1,61 @@
+-- database: filmek.db
+
+-- ==========================================================
+-- 5. Szűrés, feltételek
+-- ==========================================================
+
+-- --- A. Importálás ----------------------------------------
+-- A kapott mappában csak filmek.csv volt, filmek.sql nem, ezért
+-- a CSV-ből elkészítettem a filmek.sql fájlt (ebben a mappában).
+-- Betöltés a terminálban:
+--     sqlite3 filmek.db < filmek.sql
+--
+-- Milyen nevű tábla jött létre?  ->  top10
+
+-- --- B. Szűrés mintákkal ----------------------------------
+SELECT * FROM top10 WHERE mufaj='animációs';
+
+SELECT * FROM top10 WHERE mufaj='vígjáték';
+-- A Krampusz nem jelenik meg, mert a műfaja "horror-vígjáték",
+-- ami nem EGYEZIK MEG pontosan a 'vígjáték' szöveggel.
+
+SELECT * FROM top10 WHERE mufaj LIKE '%vígjáték';
+-- Most már a Krampusz is szerepel.
+
+SELECT * FROM top10 WHERE mufaj NOT LIKE '%vígjáték';
+
+SELECT * FROM top10 WHERE mufaj LIKE '__i%';
+-- Eredmény: sci-fi és animációs filmek.
+-- A thriller azért nem, mert benne a 3. karakter "r", nem "i"
+-- (t-h-r-i-l-l-e-r), a minta viszont a 3. helyre vár "i" betűt.
+
+-- --- C. Több feltétel -------------------------------------
+SELECT cim,hossz,mufaj FROM top10 WHERE mufaj='animációs' OR hossz<100;
+-- Eredmény: Krampusz (98), Dínó tesó (100), A kis herceg (108),
+--           Hotel Transylvania 2. (90)
+
+SELECT cim,hossz,mufaj FROM top10 WHERE mufaj='animációs' AND hossz<100;
+-- Eredmény: csak a Hotel Transylvania 2. (90 perc)
+
+-- --- D. Dátumok kezelése ----------------------------------
+SELECT cim,julianday('2015-12-19')-julianday(kezdet) AS mióta,bevetel FROM top10;
+
+-- --- E. Egyedi értékek ------------------------------------
+SELECT mufaj FROM top10 ORDER BY mufaj;
+
+SELECT DISTINCT mufaj FROM top10 ORDER BY mufaj;
+-- Eredmény: akció, animációs, horror-vígjáték, kaland,
+--           sci-fi, thriller, vígjáték
+
+
+-- ==========================================================
+-- F. Feladatok - megoldások
+-- ==========================================================
+
+-- 1. feladat: az amerikai filmek címei (az amerikai-angol is jelenjen meg)
+SELECT cim FROM top10 WHERE nemzet LIKE 'amerikai%';
+-- Eredmény: 9 film (a francia "A kis herceg" kivételével mind).
+
+-- 2. feladat: milyen értékek szerepelnek a nemzet mezőben, mindegyik csak egyszer
+SELECT DISTINCT nemzet FROM top10 ORDER BY nemzet;
+-- Eredmény: amerikai, amerikai-angol, francia
