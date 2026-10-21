@@ -1,0 +1,89 @@
+-- database: koncertek.db
+--
+-- EZ A FÁJL A RUN GOMBBAL, EGYBEN FUTTATHATÓ, AKÁRHÁNYSZOR.
+-- Csak lekérdezéseket tartalmaz. Az adatbázist a koncertek.sql
+-- építi fel, az is akárhányszor futtatható.
+
+-- ==========================================================
+-- 37. Adatbázis tervezése 3 - fesztivál koncertjei
+-- ==========================================================
+-- Az eredeti táblázat oszlopai:
+--   Zenekar_neve | Műfaj | Színpad_neve | Színpad_helyszíne |
+--   Koncert_időpontja
+--
+-- MI ISMÉTLŐDIK az öt sorban?
+--   - Azahriah 2x szerepel, mindkétszer "Pop" műfajjal
+--   - a "Pop" műfaj összesen 3x
+--   - "Nagyszínpad" + "Északi főbejárat" párosa 2x
+--   - "Erdőszél Színpad" + "Keleti tópart" párosa 2x
+--
+-- A LEGFONTOSABB MEGFIGYELÉS:
+--   A színpad NEVE és a HELYSZÍNE mindig együtt jár. A Nagyszínpad
+--   MINDIG az Északi főbejáratnál van. Ez azt jelenti, hogy a
+--   helyszín a SZÍNPADHOZ tartozik, nem a koncerthez - ezért kerül
+--   a szinpad táblába, és nem a koncert táblába.
+--
+--   Ugyanígy: a műfaj a ZENEKARHOZ tartozik, nem a koncerthez.
+--   Azahriah minden fellépése Pop, bárhol is játszik.
+--
+-- A MEGOLDÁS: négy tábla
+--   mufaj(id, nev)
+--   zenekar(id, nev, mufaj_id)
+--   szinpad(id, nev, helyszin)
+--   koncert(id, zenekar_id, szinpad_id, idopont)
+--
+-- A koncert tábla az esemény: ki, hol, mikor. Semmi más.
+
+SELECT * FROM mufaj;
+SELECT * FROM zenekar;
+SELECT * FROM szinpad;
+SELECT * FROM koncert;
+
+-- --- BIZONYÍTÁS: az eredeti táblázat visszaállítása --------
+SELECT zenekar.nev     AS "Zenekar_neve",
+       mufaj.nev       AS "Műfaj",
+       szinpad.nev     AS "Színpad_neve",
+       szinpad.helyszin AS "Színpad_helyszíne",
+       koncert.idopont AS "Koncert_időpontja"
+FROM koncert
+JOIN zenekar ON koncert.zenekar_id = zenekar.id
+JOIN mufaj   ON zenekar.mufaj_id = mufaj.id
+JOIN szinpad ON koncert.szinpad_id = szinpad.id
+ORDER BY koncert.id;
+-- Eredmény: pontosan az eredeti öt sor, ugyanabban a sorrendben.
+-- A bontás nem vesztett adatot.
+
+-- --- Mire jó ez? Pár hasznos kérdés -----------------------
+
+-- Melyik zenekar hányszor lép fel?
+SELECT zenekar.nev, count(*) AS fellepesek
+FROM koncert
+JOIN zenekar ON koncert.zenekar_id = zenekar.id
+GROUP BY zenekar.id, zenekar.nev
+ORDER BY fellepesek DESC, zenekar.nev;
+-- Azahriah 2x, a többiek 1-1x.
+
+-- Mi a műsor az egyes színpadokon, időrendben?
+SELECT szinpad.nev, szinpad.helyszin, koncert.idopont, zenekar.nev
+FROM koncert
+JOIN szinpad ON koncert.szinpad_id = szinpad.id
+JOIN zenekar ON koncert.zenekar_id = zenekar.id
+ORDER BY szinpad.nev, koncert.idopont;
+
+-- Hány koncert van műfajonként?
+SELECT mufaj.nev, count(*) AS koncertek
+FROM koncert
+JOIN zenekar ON koncert.zenekar_id = zenekar.id
+JOIN mufaj ON zenekar.mufaj_id = mufaj.id
+GROUP BY mufaj.id, mufaj.nev
+ORDER BY koncertek DESC;
+-- Pop 3, Indie 1, Elektro 1.
+
+-- A 2026.07.10-i nap programja:
+SELECT koncert.idopont, zenekar.nev, szinpad.nev
+FROM koncert
+JOIN zenekar ON koncert.zenekar_id = zenekar.id
+JOIN szinpad ON koncert.szinpad_id = szinpad.id
+WHERE koncert.idopont LIKE '2026.07.10%'
+ORDER BY koncert.idopont;
+-- Carson Coma 18:00 Erdőszél, Azahriah 20:00 Nagyszínpad.

@@ -1,0 +1,83 @@
+-- database: konyvtar.db
+--
+-- EZ A FÁJL A RUN GOMBBAL, EGYBEN FUTTATHATÓ, AKÁRHÁNYSZOR.
+-- Csak lekérdezéseket tartalmaz. Az adatbázist a konyvtar.sql
+-- építi fel, az is akárhányszor futtatható.
+
+-- ==========================================================
+-- 27. Adatbázis tervezése - iskolai könyvtár
+-- ==========================================================
+-- A feladat egyetlen táblát ad, ismétlődő adatokkal:
+--
+--   Diák Neve     | Cím                | Könyv címe     | Szerző        | Dátum | Vissza
+--   Kovács János  | Budapest, Fő u. 1. | Egri csillagok | Gárdonyi Géza | 03-14 | igen
+--   Kovács János  | Budapest, Fő u. 1. | Pál utcai fiúk | Molnár Ferenc | 03-24 | nem
+--
+-- MI A BAJ VELE?
+--   1. Kovács János neve és lakcíme kétszer szerepel. Ha elköltözik,
+--      két helyen kell javítani. Ha csak az egyiket javítod,
+--      ellentmondásos lesz az adatbázis.
+--   2. A szerző neve is ismétlődne, ha egy szerzőtől több könyv van.
+--   3. Ha egy diák még semmit nem kölcsönzött, nem lehet felvenni
+--      az adatait, mert nincs hova.
+--   4. Ha visszahozza az utolsó könyvét és töröljük a sort, a
+--      lakcíme is eltűnik.
+--
+-- A MEGOLDÁS: négy tábla
+--   diak(id, nev, cim)              - a diák adatai egy helyen
+--   szerzo(id, nev)                 - a szerző adatai egy helyen
+--   konyv(id, cim, szerzo_id)       - a könyv és a szerzője
+--   kolcsonzes(id, diak_id, konyv_id, datum, vissza)
+--
+-- A kolcsonzes a kapcsolótábla: ez köti össze a diákot a könyvvel,
+-- és csak az tartozik ide, ami tényleg a kölcsönzéshez kötődik.
+--
+-- Feltételezés a feladat szerint: minden könyvből EGY példány van,
+-- ezért nem kell külön példány tábla. Ha több példány lenne, kellene
+-- egy pelany(id, konyv_id, leltari_szam) tábla, és a kölcsönzés
+-- a példányra hivatkozna, nem a könyvre.
+
+-- --- A táblák tartalma ------------------------------------
+SELECT * FROM diak;
+-- 1 | Kovács János | Budapest, Fő u. 1.
+
+SELECT * FROM szerzo;
+-- 1 | Gárdonyi Géza      2 | Molnár Ferenc
+
+SELECT * FROM konyv;
+-- 1 | Egri csillagok | 1      2 | Pál utcai fiúk | 2
+
+SELECT * FROM kolcsonzes;
+-- 1 | 1 | 1 | 03-14 | igen      2 | 1 | 2 | 03-24 | nem
+
+-- --- BIZONYÍTÁS: az eredeti tábla visszaállítása -----------
+-- Ha a bontás helyes, a négy táblából össze kell tudni rakni
+-- pontosan az eredeti táblázatot. Ez az ellenőrzés:
+SELECT diak.nev    AS "Diák Neve",
+       diak.cim    AS "Cím",
+       konyv.cim   AS "Könyv címe",
+       szerzo.nev  AS "Szerző",
+       kolcsonzes.datum  AS "Dátum",
+       kolcsonzes.vissza AS "Vissza"
+FROM kolcsonzes
+JOIN diak   ON kolcsonzes.diak_id = diak.id
+JOIN konyv  ON kolcsonzes.konyv_id = konyv.id
+JOIN szerzo ON konyv.szerzo_id = szerzo.id
+ORDER BY kolcsonzes.id;
+-- Eredmény: pontosan a feladat két sora, ugyanabban a sorrendben.
+-- Tehát a bontás nem vesztett adatot, csak megszüntette az
+-- ismétlődést.
+
+-- --- Példa arra, mit nyertünk -----------------------------
+-- Kovács János elköltözik. Most EGY sort kell javítani, és az
+-- összes kölcsönzésénél automatikusan az új cím látszik:
+--   UPDATE diak SET cim = 'Szeged, Új u. 5.' WHERE id = 1;
+-- Az eredeti egytáblás megoldásban két sort kellett volna.
+
+-- Melyik könyv van még kint?
+SELECT konyv.cim, diak.nev, kolcsonzes.datum
+FROM kolcsonzes
+JOIN konyv ON kolcsonzes.konyv_id = konyv.id
+JOIN diak  ON kolcsonzes.diak_id = diak.id
+WHERE kolcsonzes.vissza = 'nem';
+-- Eredmény: Pál utcai fiúk, Kovács Jánosnál, 03-24 óta.
