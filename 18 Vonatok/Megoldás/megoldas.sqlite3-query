@@ -1,0 +1,70 @@
+-- database: kovasut.db
+--
+-- EZ A FÁJL A RUN GOMBBAL, EGYBEN FUTTATHATÓ, AKÁRHÁNYSZOR.
+-- A 3. feladat INSERT-je elé törlés került, különben a második
+-- futtatás "UNIQUE constraint failed" hibát adna. A leadandó
+-- megoldasok.sql-ben ez a törlés NINCS benne.
+
+-- ==========================================================
+-- 18. Kőbánya-alsó és Kőbánya-felső menetrendje
+-- ==========================================================
+-- allomasok(id, allomasNev)                          15 sor
+-- vonatok(jaratSzam, jaratTipus, indulas, allomas,
+--         vegAll, erkezIdo)                         357 sor
+--   jaratTipus: sz = személyvonat, gy = gyorsított, zó = zónázó
+--   allomas:    Alsó = Kőbánya-alsó, Felső = Kőbánya-felső
+--   vegAll   -> allomasok.id
+
+-- --- 3. feladat -------------------------------------------
+DELETE FROM allomasok WHERE id = 16;
+INSERT INTO allomasok (id, allomasNev) VALUES (16, 'Dabas');
+-- Eredmény: 16 Dabas bekerült, az allomasok tábla 16 soros.
+
+-- --- 4. feladat -------------------------------------------
+-- !!! CSAPDA AZ ADATBÁZISBAN !!!
+-- A jaratSzam mező varchar(4), és a 4-nél rövidebb járatszámok
+-- SZÓKÖZZEL vannak feltöltve. A 541-es járat tárolt értéke '541 ',
+-- szóközzel a végén. Ellenőrizve:
+--     WHERE jaratSzam = '541'        ->  0 sort érint
+--     WHERE trim(jaratSzam) = '541'  ->  1 sort érint
+-- Ugyanígy jó lenne: WHERE jaratSzam = '541 '  vagy  LIKE '541%'.
+UPDATE vonatok SET jaratTipus = 'sz' WHERE trim(jaratSzam) = '541';
+
+SELECT * FROM vonatok WHERE trim(jaratSzam) = '541';
+-- Eredmény: 541  sz  21:24  Felső  1  21:30
+-- (A jaratTipus 'sz' = személyvonat, a feladat ezt kérte.)
+
+-- --- 5. feladat -------------------------------------------
+-- Kőbánya-felső = allomas 'Felső', zónázó = jaratTipus 'zó'.
+SELECT count(*) AS "járatok száma"
+FROM vonatok
+WHERE allomas = 'Felső' AND jaratTipus = 'zó';
+-- Eredmény: 26 - pontosan a feladatlap mintája szerint.
+
+-- --- 6. feladat -------------------------------------------
+-- A Monorig közlekedő vonatok: a végállomás Monor (vegAll -> allomasok).
+-- Kőbánya-alsóról indulók: allomas = 'Alsó'.
+SELECT min(vonatok.indulas) AS elso, max(vonatok.indulas) AS utolso
+FROM vonatok
+JOIN allomasok ON vonatok.vegAll = allomasok.id
+WHERE allomasok.allomasNev = 'Monor' AND vonatok.allomas = 'Alsó';
+-- Eredmény: elso 04:49, utolso 21:54 - a minta szerint.
+-- (A minta 04:49:00 / 21:54:00 alakban mutatja, mert az eredeti
+--  adatbázisban az idő TIME típusú. Az SQLite-ban szövegként van
+--  tárolva 'ÓÓ:PP' alakban, ezért másodperc nélkül jelenik meg.
+--  Az érték ugyanaz.)
+
+-- --- 7. feladat -------------------------------------------
+-- Kőbányáról (mindkét állomásról) Szolnokra, az 5 legkorábbi.
+SELECT vonatok.indulas, vonatok.allomas, vonatok.erkezIdo
+FROM vonatok
+JOIN allomasok ON vonatok.vegAll = allomasok.id
+WHERE allomasok.allomasNev = 'Szolnok'
+ORDER BY vonatok.indulas
+LIMIT 5;
+-- Eredmény - pontosan a minta szerint:
+--   00:01  Felső  01:50
+--   00:54  Alsó   02:24
+--   02:56  Alsó   04:35
+--   04:16  Felső  06:05
+--   05:16  Felső  07:07

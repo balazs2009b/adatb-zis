@@ -1,0 +1,57 @@
+-- database: napsutes.db
+--
+-- EZ A FÁJL A RUN GOMBBAL, EGYBEN FUTTATHATÓ, AKÁRHÁNYSZOR.
+-- A 3. feladat UPDATE-je másodjára egyszerűen 0 sort érint,
+-- nem ad hibát. A leadandó fájl a megoldasok.sql.
+
+-- ==========================================================
+-- 19. Napsütés - brit régiók havi napsütéses percei
+-- ==========================================================
+-- regiok(id, regioNev)             4 sor
+-- meresek(id, ev, ho, regioId, perc)  4320 sor
+--
+-- MEGJEGYZÉS a tananyaghoz: az adatbazis.sql a meresek táblát
+--     id INTEGER AUTO_INCREMENT, ... PRIMARY KEY (id)
+-- alakban hozza létre. Az AUTO_INCREMENT MySQL-szintaxis, az SQLite
+-- nem ismeri: nem lesz belőle automatikus sorszám, és mivel az
+-- oszlop típusa így nem pontosan INTEGER, nem is rowid-helyettes,
+-- ezért MIND A 4320 SORBAN NULL az id. (Ellenőrizve.)
+-- A feladatok egyike sem használja az id-t, ezért a megoldásokat
+-- nem befolyásolja - de tudni kell róla.
+
+-- --- 3. feladat -------------------------------------------
+UPDATE regiok SET regioNev = 'Észak-Írország' WHERE regioNev = 'Észak Írország';
+
+SELECT * FROM regiok;
+-- Eredmény: Anglia, Skócia, Wales, Észak-Írország (kötőjellel).
+
+-- --- 4. feladat -------------------------------------------
+-- Hány mérési adat van, és mennyi a mért értékek átlaga?
+SELECT count(*) AS rekordszam, round(avg(perc),2) AS atlag
+FROM meresek;
+-- Eredmény: rekordszam 4320, atlag 6604.79
+-- Pontosan a feladatlap mintája szerint.
+
+-- --- 5. feladat -------------------------------------------
+-- Anglia évenkénti napsütéses ÓRÁI 1990-2000 között, időrendben
+-- visszafelé. A tábla perceket tárol, ezért osztani kell 60-nal.
+-- A 60.0 azért fontos, mert a 60 egész osztást adna.
+SELECT meresek.ev, round(sum(meresek.perc)/60.0, 1) AS orak
+FROM meresek
+JOIN regiok ON meresek.regioId = regiok.id
+WHERE regiok.regioNev = 'Anglia' AND meresek.ev BETWEEN 1990 AND 2000
+GROUP BY meresek.ev
+ORDER BY meresek.ev DESC;
+-- Eredmény: 11 sor, 2000 -> 1438.2 és 1999 -> 1561.4 a minta szerint.
+
+-- --- 6. feladat -------------------------------------------
+-- Mely évek februárjában volt 6000 perc felett a napsütés?
+-- Az időszak hossza szerint csökkenő rendben.
+SELECT meresek.ev, regiok.regioNev, meresek.perc
+FROM meresek
+JOIN regiok ON meresek.regioId = regiok.id
+WHERE meresek.ho = 2 AND meresek.perc > 6000
+ORDER BY meresek.perc DESC;
+-- Eredmény: 6 sor -
+--   2008 Anglia 7176, 2008 Wales 6546, 1988 Anglia 6522,
+--   1949 Anglia 6516, 2004 Észak-Írország 6066, (+1)

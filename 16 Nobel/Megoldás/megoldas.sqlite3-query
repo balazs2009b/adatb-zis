@@ -1,0 +1,93 @@
+-- database: nobel.db
+--
+-- EZ A FÁJL A RUN GOMBBAL, EGYBEN FUTTATHATÓ, AKÁRHÁNYSZOR.
+-- Csak lekérdezéseket tartalmaz, semmit nem ír az adatbázisba.
+--
+-- A leadandó fájlok külön vannak, a feladat által kért néven:
+--   hatvanas.sql  franciák.sql  megosztva.sql
+--   kontinens.sql  pablo.sql  Dánia.sql
+-- Ez a fájl ugyanazokat a parancsokat tartalmazza, az eredményekkel.
+
+-- ==========================================================
+-- 16. Nobel-díjas írók
+-- ==========================================================
+-- iro(az, ev, szemely, szulhely)   103 sor
+--   szulhely -> fold.azon (idegen kulcs szerepű mező)
+-- fold(azon, orszag, kontinens)     37 sor
+--
+-- Az adatbázis létrehozása a terminálban:
+--     sqlite3 nobel.db < nobel.sql
+
+-- --- B. Hatvanas évek -------------------------------------
+-- 1960 és 1970 között, a határokkal együtt -> BETWEEN.
+SELECT szemely, ev
+FROM iro
+WHERE ev BETWEEN 1960 AND 1970
+ORDER BY ev;
+-- Eredmény: 12 sor, 1960 (Saint-John Perse) ... 1970 (Szolzsenyicin).
+-- Azért 12 és nem 11, mert 1966-ban ketten kapták (Nelly Sachs és
+-- Sömuel Joszéf Agnon). Mind a 11 év szerepel.
+
+-- --- C. Franciák ------------------------------------------
+-- A szulhely mező az ország AZONOSÍTÓJA, nem a neve, ezért kell a JOIN.
+SELECT iro.szemely
+FROM iro
+JOIN fold ON iro.szulhely = fold.azon
+WHERE fold.orszag = 'Franciaország';
+-- Eredmény: 12 fő (Albert Camus, Anatole France, André Gide,
+--           Claude Simon, ... Sully Prudhomme).
+
+-- --- D. Megosztva -----------------------------------------
+-- Csak az évszám és a darabszám jelenhet meg, más mező nem.
+-- A "többen kapták" feltétel csoportra vonatkozik -> HAVING, nem WHERE.
+SELECT ev, count(*)
+FROM iro
+GROUP BY ev
+HAVING count(*) > 1;
+-- Eredmény: 4 év, mindegyikben 2-2 díjazott:
+--           1904, 1917, 1966, 1974
+
+-- --- E. Kontinensek ---------------------------------------
+SELECT fold.kontinens, count(*)
+FROM iro
+JOIN fold ON iro.szulhely = fold.azon
+GROUP BY fold.kontinens
+ORDER BY count(*) DESC;
+-- Eredmény: Európa 76, Észak- és Közép-Amerika 13, Ázsia 7,
+--           Dél-Amerika 3, Afrika 3, Ausztrália és Óceánia 1.
+--           Összesen 103 = az összes díjazott.
+
+-- --- F. Pablo Neruda --------------------------------------
+-- Neruda kontinensét is lekérdezéssel kell megadni -> segédlekérdezés.
+-- A tábláknak más nevet kell adni (i2, f2), mert kétszer szerepelnek.
+SELECT iro.szemely
+FROM iro
+JOIN fold ON iro.szulhely = fold.azon
+WHERE fold.kontinens = (
+    SELECT f2.kontinens
+    FROM iro i2
+    JOIN fold f2 ON i2.szulhely = f2.azon
+    WHERE i2.szemely = 'Pablo Neruda'
+);
+-- Eredmény: 3 fő - Gabriel García Márquez, Gabriela Mistral,
+--           Pablo Neruda. (Neruda Chilében született, Dél-Amerika.)
+--           A feladat engedi, hogy a költő neve is szerepeljen.
+
+-- --- G. Dánia ---------------------------------------------
+-- Dánia díjainak száma szintén segédlekérdezéssel.
+SELECT fold.orszag, count(*) AS db
+FROM iro
+JOIN fold ON iro.szulhely = fold.azon
+GROUP BY fold.orszag
+HAVING count(*) > (
+    SELECT count(*)
+    FROM iro i2
+    JOIN fold f2 ON i2.szulhely = f2.azon
+    WHERE f2.orszag = 'Dánia'
+)
+ORDER BY db DESC;
+-- Dániának 3 díja van, tehát a 3-nál többet szerzett országok kellenek.
+-- Eredmény: 9 ország -
+--   Franciaország 12, Olaszország 11, Németország 9, Nagy-Britannia 8,
+--   Egyesült Államok 8, Svédország 6, Spanyolország 5, Írország 4,
+--   Lengyelország 4
