@@ -3,6 +3,13 @@
 Minden lecke mappájában van egy `Megoldás` almappa. Az eredeti anyagok
 (`Források`, `.doc`, `.docx`, prompt fájlok) érintetlenek maradtak.
 
+**Bemutatáshoz és leadáshoz a `MINDEN MEGOLDÁS/` mappát használd:** ott minden
+egy helyen van, leckénként egy almappában, és minden almappában ott van az
+`Eredeti feladat/` alkönyvtár is a tananyag eredeti feladatleírásával és
+forrásszkriptjeivel. Lásd `MINDEN MEGOLDÁS/OLVASS EL.md`.
+
+A weblapos feladat külön van: `Weblap - Fenntarthatóság/fenntarthatosag.html`.
+
 ## Használat VS Code-ban
 
 1. Telepítsd a **SQLite3 Editor** (yy0931) kiegészítőt.
