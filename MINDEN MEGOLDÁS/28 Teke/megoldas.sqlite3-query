@@ -1,0 +1,62 @@
+-- database: teke.db
+--
+-- EZ A FAJL A RUN GOMBBAL, EGYBEN FUTTATHATO, AKARHANYSZOR.
+-- Csak lekerdezeseket tartalmaz. A leadando fajl a megoldasok.sql.
+
+-- ==========================================================
+-- 28. Teke - verseny eredmenyei
+-- ==========================================================
+-- egyesuletek(id, nev)                            46 sor
+-- versenyzok(rajtszam, nev, egyid, korcsop)       60 sor
+-- eredmenyek(sorsz, versenyzo, teli, tarolas, ures)  190 sor
+--   teli = telitalalatok pontja, tarolas = tarolasok pontja,
+--   ures = ures guritasok szama
+
+-- --- 3. feladat -------------------------------------------
+SELECT nev FROM versenyzok WHERE korcsop = 'A' ORDER BY nev;
+-- Eredmeny: 36 versenyzo az A korcsoportban (a 60-bol).
+
+-- --- 4. feladat -------------------------------------------
+-- Akinek tobb ures guritasa is volt, az is csak egyszer -> DISTINCT.
+SELECT DISTINCT versenyzo FROM eredmenyek WHERE ures > 0;
+-- Eredmeny: 59 rajtszam, vagyis a 60 versenyzobol 59-nek volt
+-- legalabb egy ures guritasa.
+
+-- --- 5. feladat -------------------------------------------
+SELECT versenyzok.nev, avg(eredmenyek.tarolas) AS atlagpont
+FROM versenyzok
+JOIN eredmenyek ON versenyzok.rajtszam = eredmenyek.versenyzo
+GROUP BY versenyzok.rajtszam, versenyzok.nev
+ORDER BY atlagpont DESC;
+-- Eredmeny: mind a 60 versenyzo. Az elen Borbely Tibor 85.0,
+-- Koltai Laszlo 81.0, Toth Janos I. 75.0, Kalmar Istvan 73.5.
+
+-- --- 6. feladat -------------------------------------------
+SELECT egyesuletek.nev
+FROM egyesuletek
+JOIN versenyzok ON egyesuletek.id = versenyzok.egyid
+GROUP BY egyesuletek.id, egyesuletek.nev
+ORDER BY count(*) DESC
+LIMIT 1;
+-- Eredmeny: Zalaegerszeg am., 3 versenyzovel.
+-- Nincs holtverseny: a masodik helyen 2-2 versenyzos egyesuletek
+-- allnak, ezert a LIMIT 1 egyertelmu.
+
+-- --- 7. feladat -------------------------------------------
+-- A harom rendezesi szempont pontosan a feladat szerint:
+--   1. osszesitett eredmeny csokkenoen
+--   2. egyenloseg eseten a magasabb tarolasi pontszam
+--   3. ha ez is egyenlo, a KEVESEBB ures guritas -> novekvo
+SELECT versenyzok.nev AS nev,
+       sum(eredmenyek.teli) + sum(eredmenyek.tarolas) AS eredmeny,
+       sum(eredmenyek.tarolas) AS tarolas,
+       sum(eredmenyek.ures) AS ures
+FROM versenyzok
+JOIN eredmenyek ON versenyzok.rajtszam = eredmenyek.versenyzo
+WHERE versenyzok.korcsop = 'B'
+GROUP BY versenyzok.rajtszam, versenyzok.nev
+ORDER BY eredmeny DESC, tarolas DESC, ures;
+-- Eredmeny: 24 versenyzo a B korcsoportban. A dobogo:
+--   1. Koltai Laszlo   467 / 162 / 1
+--   2. Borbely Tibor   463 / 170 / 2
+--   3. Meszaros Jozsef 457 / 143 / 2
