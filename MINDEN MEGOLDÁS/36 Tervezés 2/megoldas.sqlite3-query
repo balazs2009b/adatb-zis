@@ -1,0 +1,85 @@
+-- database: szerelok.db
+--
+-- EZ A FÁJL A RUN GOMBBAL, EGYBEN FUTTATHATÓ, AKÁRHÁNYSZOR.
+-- Csak lekérdezéseket tartalmaz. Az adatbázist a szerelok.sql
+-- építi fel, az is akárhányszor futtatható.
+
+-- ==========================================================
+-- 36. Adatbázis tervezése 2 - szerelők munkanyilvántartása
+-- ==========================================================
+-- Az eredeti Excel tábla oszlopai:
+--   Szerelő neve | Szakterület | Szerelő tel. | Ügyfél neve |
+--   Ügyfél címe | Ügyfél tel. | Munka leírása | Dátum | Munkadíj
+--
+-- MI ISMÉTLŐDIK a négy sorban?
+--   - Kovács János neve, szakterülete és telefonja: 2x
+--   - Szabó Béla adatai: 2x
+--   - Nagy Éva ügyfél neve, címe, telefonja: 2x
+--   - Kiss Pál adatai: 2x
+--   - a "Villanyszerelő" és "Vízszerelő" szöveg: 2-2x
+--
+-- MIÉRT BAJ EZ?
+--   Ha Kovács János telefonszáma megváltozik, két sorban kell
+--   javítani. Ha csak az egyiket javítod, ugyanannak az embernek
+--   két különböző telefonszáma lesz az adatbázisban.
+--
+-- A MEGOLDÁS: négy tábla
+--   szakterulet(id, nev)
+--   szerelo(id, nev, szakterulet_id, telefon)
+--   ugyfel(id, nev, cim, telefon)
+--   munka(id, szerelo_id, ugyfel_id, leiras, datum, munkadij)
+--
+-- A munka tábla a kapcsolótábla: ez köti össze a szerelőt az
+-- ügyféllel, és csak a munkához tartozó adatok vannak benne.
+--
+-- Miért külön tábla a szakterület? Mert így a szöveg egyszer
+-- szerepel, nem lehet elgépelni, és könnyű új szakterületet
+-- felvenni akkor is, ha még nincs hozzá szerelő.
+
+SELECT * FROM szakterulet;
+SELECT * FROM szerelo;
+SELECT * FROM ugyfel;
+SELECT * FROM munka;
+
+-- --- BIZONYÍTÁS: az eredeti Excel tábla visszaállítása -----
+SELECT szerelo.nev     AS "Szerelő neve",
+       szakterulet.nev AS "Szakterület",
+       szerelo.telefon AS "Szerelő tel.",
+       ugyfel.nev      AS "Ügyfél neve",
+       ugyfel.cim      AS "Ügyfél címe",
+       ugyfel.telefon  AS "Ügyfél tel.",
+       munka.leiras    AS "Munka leírása",
+       munka.datum     AS "Dátum",
+       munka.munkadij  AS "Munkadíj"
+FROM munka
+JOIN szerelo ON munka.szerelo_id = szerelo.id
+JOIN szakterulet ON szerelo.szakterulet_id = szakterulet.id
+JOIN ugyfel ON munka.ugyfel_id = ugyfel.id
+ORDER BY munka.id;
+-- Eredmény: pontosan az eredeti négy sor, ugyanabban a sorrendben.
+-- A bontás nem vesztett adatot.
+
+-- --- Mire jó ez? Pár hasznos kérdés -----------------------
+
+-- Melyik szerelő mennyit keresett?
+SELECT szerelo.nev, sum(munka.munkadij) AS osszes_munkadij
+FROM munka
+JOIN szerelo ON munka.szerelo_id = szerelo.id
+GROUP BY szerelo.id, szerelo.nev
+ORDER BY osszes_munkadij DESC;
+-- Kovács János 60 000, Szabó Béla 30 000 Ft.
+
+-- Melyik ügyfélnél hány munka volt?
+SELECT ugyfel.nev, count(*) AS munkak
+FROM munka
+JOIN ugyfel ON munka.ugyfel_id = ugyfel.id
+GROUP BY ugyfel.id, ugyfel.nev;
+-- Mindkét ügyfélnél 2-2 munka volt.
+
+-- Szakterületenként az átlagos munkadíj:
+SELECT szakterulet.nev, round(avg(munka.munkadij)) AS atlag_munkadij
+FROM munka
+JOIN szerelo ON munka.szerelo_id = szerelo.id
+JOIN szakterulet ON szerelo.szakterulet_id = szakterulet.id
+GROUP BY szakterulet.id, szakterulet.nev;
+-- Villanyszerelő 30 000, Vízszerelő 15 000 Ft.

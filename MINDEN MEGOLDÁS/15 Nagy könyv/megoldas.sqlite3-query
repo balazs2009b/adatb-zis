@@ -1,0 +1,79 @@
+-- database: nagykonyv.db
+--
+-- A leadandó fájl a megoldasok.sql - a javítás során csak azt értékelik.
+-- Ez a fájl ugyanazokat a parancsokat tartalmazza, kiegészítve az
+-- eredményekkel és a mintával való összevetéssel.
+--
+-- FIGYELEM: a mellette lévő nagykonyv.db már fel van töltve
+-- (szerzo 103, konyv 153 sor). A tablak.sql / adatok.sql az EGYSZER
+-- lefutó építő parancsfájlok; újrafuttatva "already exists" hibát adnak.
+
+-- ==========================================================
+-- 15. A Nagy Könyv - 2005-ös országos felmérés
+-- ==========================================================
+-- szerzo(id, nev, szulEv, halEv, nemzetiseg)   103 sor
+--   halEv NULL = a szerző még élt 2005-ben
+-- konyv(id, cim, szerzoId, helyezes)           153 sor
+--   helyezes 1-100 = a TOP100, 101 = a további népszerű regények
+
+-- --- 3. feladat -------------------------------------------
+-- Milyen nemzetiségű külföldi írók szerepelnek? Egy nemzetiség
+-- csak egyszer - ezért DISTINCT.
+SELECT DISTINCT nemzetiseg
+FROM szerzo
+WHERE nemzetiseg<>'magyar';
+-- Eredmény: 13 sor, a minta sorrendjében:
+--   angol, francia, amerikai, német, osztrák, orosz, kolumbiai,
+--   lengyel, cseh, brazil, olasz, finn, walesi
+-- A feladat nem kér rendezést, és a minta sem ábécé rendű
+-- (angol, francia, amerikai), ezért nincs ORDER BY.
+
+-- --- 4. feladat -------------------------------------------
+-- A 2005-ben még élő szerzők neve és akkori kora.
+-- "a felméréskor már elhunyt szerzőket ne vegye figyelembe"
+--   -> halEv IS NULL (a PDF szerint a halEv NULL, ha még élt 2005-ben).
+-- FONTOS: halEv IS NULL kell, NEM halEv = NULL - az utóbbi SQL-ben
+-- soha nem igaz, és üres listát adna.
+SELECT nev, 2005-szulEv AS kor
+FROM szerzo
+WHERE halEv IS NULL;
+-- Eredmény: 17 sor, a minta szerint kezdve:
+--   Böszörményi Gyula 41, Dan Brown 41, J. K. Rowling 40
+-- Rendezés nincs előírva, a tábla sorrendje adja a mintát.
+
+-- --- 5. feladat -------------------------------------------
+-- A magyar szerzők neve és az elért LEGJOBB helyezésük.
+-- A legjobb helyezés a legkisebb szám -> min().
+SELECT szerzo.nev AS nev, min(konyv.helyezes) AS legjobb
+FROM szerzo
+JOIN konyv ON szerzo.id=konyv.szerzoId
+WHERE szerzo.nemzetiseg='magyar'
+GROUP BY szerzo.nev
+ORDER BY legjobb;
+-- Eredmény: 44 sor, a minta szerint:
+--   Gárdonyi Géza 1, Molnár Ferenc 2, Szabó Magda 3, Jókai Mór 5, ...
+
+-- --- 6. feladat -------------------------------------------
+-- Akik több könyvvel is bekerültek: nevük és könyveik száma.
+-- "több könyvükkel" -> HAVING count(*)>1
+-- Rendezés a minta szerint: elsődlegesen könyvszám csökkenő,
+-- másodlagosan név ábécé rendben.
+SELECT szerzo.nev AS nev, count(*) AS konyvek
+FROM szerzo
+JOIN konyv ON szerzo.id=konyv.szerzoId
+GROUP BY szerzo.nev
+HAVING count(*)>1
+ORDER BY konyvek DESC, nev;
+-- Eredmény: 29 sor, pontosan a minta szerint:
+--   Szabó Magda 5, majd a 4 könyvesek ábécé rendben:
+--   Fekete István, Gárdonyi Géza, J. K. Rowling, Jókai Mór,
+--   Mikszáth Kálmán, Móricz Zsigmond, Rejtő Jenő, ...
+
+-- --- Megjegyzés az adatbázisról ---------------------------
+-- A szerzo táblában J. K. Rowling KÉTSZER szerepel, két külön
+-- azonosítóval: 'J. K. Rowling' (1965, angol) és
+-- 'Joanne Kathleen Rowling' (1956, angol) - ugyanaz a személy.
+-- A két rekord születési éve is eltér (40 és 49 év a 4. feladatban).
+-- Ez a feladatsor adathibája, de a feladatok szövege kifejezetten a
+-- NÉV szerinti csoportosítást engedi meg, ezért a megoldásokat nem
+-- befolyásolja - csak tudni kell róla.

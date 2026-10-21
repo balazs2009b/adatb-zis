@@ -1,0 +1,95 @@
+-- database: zoldsegesek.db
+--
+-- EZ A FAJL A RUN GOMBBAL, EGYBEN FUTTATHATO, AKARHANYSZOR.
+-- A vevok2 tabla letrehozasa ele eldobas kerult. A leadando
+-- masol.sql-ben ez NINCS benne.
+--
+-- ============================================================
+-- FIGYELEM, SULYOS ADATHIBA AZ ADATBAZISBAN!
+--
+-- A vasarlasok.mennyiseg mezoben a tizedes elvalaszto VESSZO, es a
+-- mezo szoveg tipusu: 41 323 sorbol 30 855 ilyen (pl. '4,5', '0,75').
+-- A maradek 10 468 sor rendes szam.
+--
+-- Ha szamolni probalsz vele, az SQLite a vesszonel LEVAGJA a szamot,
+-- es NEM AD HIBAUZENETET:
+--     '4,5'  * 1  ->  4     (4.5 helyett)
+--     '0,75' * 1  ->  0     (0.75 helyett)
+--
+-- Ennek a hatasa merheto: a teljes mennyiseg osszege
+--     nyersen szamolva:        93 058
+--     a vesszot pontra cserelve: 108 523
+-- vagyis 14 szazalekkal kevesebb, csendben.
+--
+-- Ezert MINDEN szamolasnal replace(mennyiseg, ',', '.') kell.
+-- ============================================================
+
+-- ==========================================================
+-- 35. Zoldsegesek - 2009-es nyari piaci forgalom
+-- ==========================================================
+-- zoldsegesek(zoldsegesazon, nev)                 15 sor
+-- zoldsegek(zoldsegazon, nev, egysegar)           22 sor
+-- vevok(vevoazon, nev)                           185 sor
+-- vasarlasok(vasarlasazon, datum, vevo, aru,
+--            mennyiseg, zoldseges)             41 323 sor
+--   A datumok 2009-06-01 es 2009-08-28 koze esnek, tehat a teljes
+--   adatbazis a nyarat fedi le.
+
+-- --- B. Junius --------------------------------------------
+SELECT vasarlasok.datum,
+       vevok.nev AS vevo,
+       zoldsegek.nev AS aru,
+       vasarlasok.mennyiseg,
+       replace(vasarlasok.mennyiseg, ',', '.') * zoldsegek.egysegar AS ar
+FROM vasarlasok
+JOIN vevok ON vasarlasok.vevo = vevok.vevoazon
+JOIN zoldsegek ON vasarlasok.aru = zoldsegek.zoldsegazon
+WHERE vasarlasok.datum LIKE '2009-06%'
+ORDER BY vasarlasok.datum, vevok.nev;
+-- Eredmeny: 13 808 juniusi tetel.
+-- Pl. 2009-06-01, Antal Aniko, sargarepa, 5 -> 950 Ft
+--     2009-06-01, Antal Aniko, banan, '0,25' -> 77.5 Ft
+-- A banan sora jol mutatja a vesszo-problemat: javitas nelkul
+-- 0 Ft-ot adna.
+
+-- --- C. Alma ----------------------------------------------
+SELECT zoldsegesek.nev,
+       sum(replace(vasarlasok.mennyiseg, ',', '.')) AS mennyiseg
+FROM vasarlasok
+JOIN zoldsegesek ON vasarlasok.zoldseges = zoldsegesek.zoldsegesazon
+JOIN zoldsegek ON vasarlasok.aru = zoldsegek.zoldsegazon
+WHERE zoldsegek.nev = 'alma'
+GROUP BY zoldsegesek.zoldsegesazon, zoldsegesek.nev
+ORDER BY mennyiseg DESC
+LIMIT 1;
+-- Eredmeny: Verocki Geza, 382.5 kg almaval.
+-- A masodik Szederkenyi Izidor 377.75-tel, tehat szoros.
+-- A vesszo javitasa nelkul 329 es 324 jonne ki: a SORREND
+-- veletlenul ugyanaz maradna, de a SZAMOK hibasak lennenek.
+-- Mas keresesnel ez a veletlen nem feltetlenul mukodik.
+
+-- --- D. Tabla masolasa ------------------------------------
+DROP TABLE IF EXISTS vevok2;
+CREATE TABLE vevok2 AS SELECT * FROM vevok;
+-- Eredmeny: vevok2, 185 sor - a vevok tabla masolata.
+
+-- --- E. Vasaroltak ----------------------------------------
+SELECT DISTINCT vevoazon
+FROM vevok2
+WHERE vevoazon IN (SELECT vevo FROM vasarlasok);
+-- Eredmeny: 183 vevo vasarolt a nyar folyaman.
+
+-- --- F. Nem vasaroltak ------------------------------------
+-- Ugyanaz a feltetel, de tagadva: NOT IN.
+SELECT nev
+FROM vevok2
+WHERE vevoazon NOT IN (SELECT vevo FROM vasarlasok);
+-- Eredmeny: 2 vevo - Lengyel Pal es Kiss Alajos.
+
+-- --- G. Torles --------------------------------------------
+-- Az elozo parancs SELECT-jet DELETE-re cserelve.
+DELETE FROM vevok2
+WHERE vevoazon NOT IN (SELECT vevo FROM vasarlasok);
+
+SELECT count(*) FROM vevok2;
+-- Eredmeny: 183 sor maradt a 185-bol.

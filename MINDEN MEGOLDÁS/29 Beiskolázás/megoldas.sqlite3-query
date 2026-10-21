@@ -1,0 +1,59 @@
+-- database: beiskolazas.db
+--
+-- EZ A FAJL A RUN GOMBBAL, EGYBEN FUTTATHATO, AKARHANYSZOR.
+-- A leadando fajl a megoldasok.sql.
+
+-- ==========================================================
+-- 29. Beiskolazas - Joszakma Szakgimnazium
+-- ==========================================================
+-- diakok(oktazon, nev, hozott, kpmagy, kpmat)       120 sor
+-- tagozatok(akod, agazat, nyek)                       4 sor
+--   nyek = 1, ha nyelvi elokeszito
+-- jelentkezesek(diak, tag, hely)                    120 sor
+--   hely = hanyadik helyen jelolte meg
+
+-- --- 4. feladat -------------------------------------------
+-- Nagy Vince magyar pontszamanak javitasa 43-ra.
+-- Az OKTATASI AZONOSITO alapjan javitunk, nem a nev alapjan!
+UPDATE diakok SET kpmagy = 43 WHERE oktazon = '0143302';
+
+SELECT * FROM diakok WHERE oktazon = '0143302';
+-- Eredmeny: 0143302 | Nagy Vince | 26 | 43 | 41
+
+-- --- 5. feladat -------------------------------------------
+-- "maximalis pontszamu kozponti felveteli" mindket targybol.
+-- Ellenorizve: a kpmagy es a kpmat maximuma is 50, tehat
+-- a maximalis pontszam 50-50.
+SELECT nev
+FROM diakok
+WHERE kpmagy = 50 AND kpmat = 50 AND hozott >= 40
+ORDER BY nev;
+-- Eredmeny: 3 felvetelizo - Bodnar Krisztian, Hegedus Maria,
+--   Szilagyi Richard.
+
+-- --- 6. feladat -------------------------------------------
+-- Ket szures: elso helyen jelolt (hely=1) ES nyelvi elokeszito (nyek=1).
+-- Terjedelem = a legnagyobb es a legkisebb hozott pont kulonbsege.
+SELECT tagozatok.agazat,
+       count(*) AS jelentkezoszam,
+       max(diakok.hozott) - min(diakok.hozott) AS terjedelem
+FROM jelentkezesek
+JOIN tagozatok ON jelentkezesek.tag = tagozatok.akod
+JOIN diakok ON jelentkezesek.diak = diakok.oktazon
+WHERE jelentkezesek.hely = 1 AND tagozatok.nyek = 1
+GROUP BY tagozatok.agazat
+ORDER BY jelentkezoszam DESC;
+-- Eredmeny: informatika 15 jelentkezo / 22 terjedelem,
+--           elektronika 12 jelentkezo / 27 terjedelem.
+
+-- --- 7. feladat -------------------------------------------
+-- Osszpontszam = hozott + a ket kozponti felveteli pontszama.
+-- Harom rendezesi szempont a feladat szerint.
+SELECT diakok.nev, tagozatok.agazat, tagozatok.nyek, jelentkezesek.hely,
+       diakok.hozott + diakok.kpmagy + diakok.kpmat AS osszpont
+FROM jelentkezesek
+JOIN tagozatok ON jelentkezesek.tag = tagozatok.akod
+JOIN diakok ON jelentkezesek.diak = diakok.oktazon
+ORDER BY tagozatok.agazat, osszpont DESC, jelentkezesek.hely;
+-- Eredmeny: mind a 120 jelentkezes. Elektronikaval kezd, az elso
+--   Szekeres Milan 140 ponttal.

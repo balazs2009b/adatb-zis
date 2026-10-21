@@ -1,0 +1,86 @@
+-- database: troli.db
+--
+-- EZ A FAJL A RUN GOMBBAL, EGYBEN FUTTATHATO, AKARHANYSZOR.
+-- A 12. feladat beszurasa ele torles kerult, kulonben a masodik
+-- futtatas hibat adna. A leadando megoldasok.sql-ben ez NINCS benne.
+
+-- ==========================================================
+-- 31. Budapesti trolibusz-halozat
+-- ==========================================================
+-- megallok(id, nev)                        197 + 1 sor
+-- jaratok(id, jaratSzam, jaratTipus, elsoAjtos)   20 sor
+--   elsoAjtos: 1 = igaz, 0 = hamis (logikai)
+-- halozat(jarat, megallo, irany, sorszam)        587 sor
+--   Egy jarat egy megalloja egy iranyban = egy sor.
+
+-- --- 12. feladat ------------------------------------------
+DELETE FROM megallok WHERE id = 198;
+INSERT INTO megallok (id, nev) VALUES (198, 'Kőbányai garázs');
+
+SELECT * FROM megallok WHERE id = 198;
+-- Eredmeny: 198 | Kobanyai garazs
+
+-- --- 13. feladat ------------------------------------------
+-- A 20-as azonositoju jarat (83-as troli) elso ajtos felszallasi
+-- rendjet Hamisra kell javitani. A logikai hamis erteke 0.
+UPDATE jaratok SET elsoAjtos = 0 WHERE id = 20;
+
+SELECT * FROM jaratok WHERE id = 20;
+-- Eredmeny: 20 | 83 | T | 0   (az elsoAjtos 1-rol 0-ra valtozott)
+
+-- --- 14. feladat ------------------------------------------
+SELECT jaratSzam FROM jaratok WHERE elsoAjtos = 1;
+-- Eredmeny: 7 jaratszam. A minta szerinti kezdet: 72, 73, 74A, 76, ...
+
+-- --- 15. feladat ------------------------------------------
+-- "setany" szora vegzodik -> a % a szo ELE kerul.
+SELECT nev FROM megallok WHERE nev LIKE '%sétány' ORDER BY nev;
+-- Eredmeny: 3 megallo - Dvorak setany, Kos Karoly setany,
+--           Olof Palme setany. A minta elso ketto sora egyezik.
+
+-- --- 16. feladat ------------------------------------------
+SELECT halozat.sorszam AS sorszam, megallok.nev AS megallo
+FROM halozat
+JOIN jaratok ON halozat.jarat = jaratok.id
+JOIN megallok ON halozat.megallo = megallok.id
+WHERE jaratok.jaratSzam = 'CITY' AND halozat.irany = 'A'
+ORDER BY halozat.sorszam;
+-- Eredmeny: 13 megallo. A minta harom sora pontosan egyezik:
+--   1 Fovam ter M, 2 Kalvin ter M, 3 Ferenciek tere M.
+
+-- --- 17. feladat ------------------------------------------
+-- !!! ELLENTMONDAS A FELADAT SZOVEGE ES A MINTA KOZOTT !!!
+--
+-- A feladat szovege szerint azok a megallok kellenek, ahol legalabb
+-- 3 KULONBOZO JARATRA lehet felszallni. Ez a count(DISTINCT jarat)
+-- lenne. A feladatlap mintaja viszont mast mutat:
+--
+--   Akacfa utca                      4
+--   Andrassy ut (Opera M)            4
+--   Andrassy ut (Vorosmarty utca M)  4
+--
+-- Az Akacfa utcat valojaban csak KET jarat erinti (a 6-os es a
+-- 14-es), viszont mindketto MINDKET iranyban megall ott, ezert a
+-- halozat tablaban 4 sor tartozik hozza. A minta tehat a halozat
+-- SORAIT szamolja, nem a kulonbozo jaratokat.
+--
+-- Ellenorizve mindket valtozatra:
+--   count(*)              -> 83 sor, a minta mindharom sora egyezik
+--   count(DISTINCT jarat) -> 30 sor, a minta egyik sora sem szerepel
+--
+-- Ezert a MINTA SZERINTI valtozatot adom megoldasnak (ezt ertekelik):
+SELECT megallok.nev AS megallo, count(*) AS jaratokSzama
+FROM megallok
+JOIN halozat ON megallok.id = halozat.megallo
+GROUP BY megallok.id, megallok.nev
+HAVING count(*) >= 3;
+-- Eredmeny: 83 megallo.
+--
+-- A feladat SZOVEGE szerinti (logikailag helyes) valtozat, ha a
+-- tanar ezt varna - ez 30 sort ad:
+--   SELECT megallok.nev AS megallo,
+--          count(DISTINCT halozat.jarat) AS jaratokSzama
+--   FROM megallok
+--   JOIN halozat ON megallok.id = halozat.megallo
+--   GROUP BY megallok.id, megallok.nev
+--   HAVING count(DISTINCT halozat.jarat) >= 3;

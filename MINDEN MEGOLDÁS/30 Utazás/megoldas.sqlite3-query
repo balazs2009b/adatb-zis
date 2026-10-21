@@ -1,0 +1,93 @@
+-- database: utazas.db
+--
+-- EZ A FAJL A RUN GOMBBAL, EGYBEN FUTTATHATO, AKARHANYSZOR.
+-- Csak lekerdezeseket tartalmaz. A leadando fajl a megoldasok.sql.
+--
+-- ============================================================
+-- FONTOS: AZ EREDETI utazas.sql NEM FUTTATHATO SQLite-ban!
+-- Harom MySQL-maradvany van benne:
+--   1. helyseg tabla: PRIMARY KEY (az) utan pontosvesszo all a zaro
+--      zarojel elott - szintaktikai hiba.
+--   2. COLLATE utf8mb4_hungarian_ci - MySQL rendezesi szabaly.
+--      Hibauzenet: no such collation sequence.
+--   3. AUTO_INCREMENT - MySQL kulcsszo, az SQLite nem ismeri.
+-- A mellette levo JAVITOTT utazas.sql mindharmat kijavitja.
+--
+-- ADATHIBA, amit NEM javitottam: a szalloda tablaban a CL
+-- azonositoju hotel neve 'TEXTm Life'. Valoszinuleg 'Charm Life'
+-- volt, es egy figyelmetlen char -> TEXT csere az adatba is
+-- beleirt. Egyik feladat sem hivatkozik erre a szallodara.
+-- ============================================================
+
+-- ==========================================================
+-- 30. Utazasi iroda - tavaszi ajanlatok
+-- ==========================================================
+-- helyseg(az, nev, orszag)                             4 sor
+-- szalloda(az, nev, besorolas, helyseg_az,
+--          tengerpart_tav, repter_tav, felpanzio)     12 sor
+-- tavasz(sorszam, szalloda_az, indulas, idotartam, ar) 456 sor
+--   Az indulasok 2025-01-02 es 2025-04-28 koze esnek.
+
+-- --- 2. feladat -------------------------------------------
+SELECT * FROM szalloda ORDER BY besorolas DESC, nev;
+-- Eredmeny: mind a 12 szalloda, az 5 csillagosokkal kezdve.
+
+-- --- 3. feladat -------------------------------------------
+-- Az orszag a helyseg tablaban van, ezert harom tabla kell.
+SELECT szalloda.nev, tavasz.indulas, tavasz.ar
+FROM tavasz
+JOIN szalloda ON tavasz.szalloda_az = szalloda.az
+JOIN helyseg ON szalloda.helyseg_az = helyseg.az
+WHERE helyseg.orszag = 'Tunézia';
+-- Eredmeny: 180 ut.
+
+-- --- 4. feladat -------------------------------------------
+-- "kozvetlen tengerparti" = tengerpart_tav 0.
+-- Marcius: az indulas eeee-hh-nn alaku szoveg -> LIKE '2025-03%'.
+SELECT helyseg.orszag, szalloda.nev, szalloda.besorolas, tavasz.indulas, tavasz.ar
+FROM tavasz
+JOIN szalloda ON tavasz.szalloda_az = szalloda.az
+JOIN helyseg ON szalloda.helyseg_az = helyseg.az
+WHERE szalloda.tengerpart_tav = 0 AND tavasz.indulas LIKE '2025-03%';
+-- Eredmeny: 89 ut.
+
+-- --- 5. feladat -------------------------------------------
+-- A Kiss csalad felteteli:
+--   az 5 csillagos tul draga   -> besorolas < 5
+--   felpanziot igenyelnek      -> felpanzio = 1
+--   a repter max 20 km         -> repter_tav <= 20
+-- "Az egy adott szallodaban azonos aron szereplo utakat ne tekintse
+-- kulon lehetosegnek" -> DISTINCT (ugyanaz a szalloda+ar egyszer).
+SELECT DISTINCT helyseg.orszag, szalloda.az, tavasz.ar
+FROM tavasz
+JOIN szalloda ON tavasz.szalloda_az = szalloda.az
+JOIN helyseg ON szalloda.helyseg_az = helyseg.az
+WHERE szalloda.besorolas < 5 AND szalloda.felpanzio = 1 AND szalloda.repter_tav <= 20
+ORDER BY tavasz.ar
+LIMIT 5;
+-- Eredmeny: Egyiptom CZ 59900, Tunezia HB 84900, Egyiptom CZ 86900,
+--           Tunezia HB 90900, Egyiptom CZ 94900.
+
+-- --- 6. feladat -------------------------------------------
+-- A feladat ADDDATE(datum, kifejezes) fuggvenyt javasol. Ez MySQL,
+-- az SQLite nem ismeri. Az SQLite megfeleloje:
+--     date(datum, '+N day')
+-- Az ut hosszaba az indulas ES a hazautazas napja is beleszamit,
+-- ezert a befejezes nem +idotartam, hanem +(idotartam-1) nap.
+SELECT tavasz.indulas AS kezdet,
+       date(tavasz.indulas, '+' || (tavasz.idotartam - 1) || ' day') AS befejezes,
+       tavasz.ar * 6 AS osszkoltseg
+FROM tavasz
+JOIN szalloda ON tavasz.szalloda_az = szalloda.az
+WHERE szalloda.nev = 'Marhaba'
+ORDER BY tavasz.indulas DESC;
+-- Eredmeny: 33 ut. A legkesobbi indulas 2025-04-24, 8 napos ut,
+-- tehat 2025-05-01-ig tart, 6 fore 419 400 Ft.
+
+-- --- 7. feladat -------------------------------------------
+SELECT szalloda.nev, count(*) AS utak
+FROM tavasz
+JOIN szalloda ON tavasz.szalloda_az = szalloda.az
+GROUP BY szalloda.az, szalloda.nev;
+-- Eredmeny: mind a 12 szalloda. Pl. Baron Resort 33, Cesar Palace 27,
+-- Caribbean World Soma Bay 59 ut.

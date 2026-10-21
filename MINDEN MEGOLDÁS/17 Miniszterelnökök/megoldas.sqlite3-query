@@ -1,0 +1,99 @@
+-- database: miniszter.db
+--
+-- EZ A FÁJL A RUN GOMBBAL, EGYBEN FUTTATHATÓ, AKÁRHÁNYSZOR.
+-- Csak lekérdezéseket tartalmaz, semmit nem ír az adatbázisba.
+-- A leadandó fájl a megoldasok.sql, ugyanezekkel a parancsokkal.
+
+-- ==========================================================
+-- 17. Magyar miniszterelnökök
+-- ==========================================================
+-- szemely(nev, szem, hely, szul, hal)       56 sor
+-- elnokok(azon, szem, mettol, meddig)       63 sor
+-- Egy személyhez több hivatali ciklus is tartozhat.
+
+-- --- 2. feladat -------------------------------------------
+SELECT nev, szul
+FROM szemely
+ORDER BY szul;
+-- Eredmény: 56 sor, Kossuth Lajos (1802) ... Orbán Viktor (1963).
+
+-- --- 3. feladat -------------------------------------------
+-- A hivatali megbízás befejező éve azonos a halálozás évével,
+-- vagyis a hivatalban érte a halál (vagy annak évében távozott).
+-- A DISTINCT azért kell, mert egy személynek több ciklusa is lehet.
+SELECT DISTINCT szemely.nev, szemely.szul, szemely.hal
+FROM szemely
+JOIN elnokok ON szemely.szem = elnokok.szem
+WHERE elnokok.meddig = szemely.hal;
+-- Eredmény: 3 fő -
+--   Gömbös Gyula   1886-1936
+--   Teleki Pál     1879-1941
+--   Antall József  1932-1993
+
+-- --- 4. feladat -------------------------------------------
+-- 1905-ben hivatalban lévők: a ciklus magában foglalja az 1905-öt.
+SELECT szemely.nev
+FROM szemely
+JOIN elnokok ON szemely.szem = elnokok.szem
+WHERE 1905 BETWEEN elnokok.mettol AND elnokok.meddig;
+-- Eredmény: 2 fő - Tisza István és Fejérváry Géza.
+--           (1905-ben váltás volt, ezért ketten.)
+
+-- --- 5. feladat -------------------------------------------
+-- A csoportosítás az azonosítóra megy (szem), nem csak a névre -
+-- így akkor is helyes, ha két azonos nevű személy lenne.
+SELECT szemely.nev, count(*)
+FROM szemely
+JOIN elnokok ON szemely.szem = elnokok.szem
+GROUP BY szemely.szem, szemely.nev
+HAVING count(*) > 1
+ORDER BY count(*) DESC;
+-- Eredmény: 6 fő -
+--   Wekerle Sándor 3x
+--   Kádár János, Khuen-Héderváry Károly, Nagy Imre,
+--   Teleki Pál, Tisza István: 2-2x
+
+-- --- 6. feladat -------------------------------------------
+-- "egyfolytában" = egyetlen cikluson belül, ezért nem kell összegezni.
+SELECT szemely.nev, elnokok.meddig - elnokok.mettol AS hossz
+FROM szemely
+JOIN elnokok ON szemely.szem = elnokok.szem
+ORDER BY hossz DESC
+LIMIT 1;
+-- Eredmény: Tisza Kálmán, 15 év.
+-- Nincs holtverseny: a második Lázár György 12 évvel.
+
+-- --- 7. feladat -------------------------------------------
+-- Teleki Pál születési helyét is lekérdezéssel kell megadni
+-- -> segédlekérdezés. Az ő neve nem szerepelhet az eredményben.
+SELECT nev
+FROM szemely
+WHERE hely = (SELECT hely FROM szemely WHERE nev = 'Teleki Pál')
+  AND nev <> 'Teleki Pál';
+-- Teleki Pál Budapesten született.
+-- Eredmény: 8 fő - Antall József, Dálnoki Miklós Béla,
+--   Darányi Kálmán, Horn Gyula, Imrédy Béla, Károlyi Mihály,
+--   Lakatos Géza, Medgyessy Péter.
+
+-- --- 8. feladat -------------------------------------------
+-- Életkor hivatalba lépéskor: mettol - szul.
+-- "50. életévük betöltése előtt" -> a kor 50-nél kisebb.
+SELECT szemely.nev, elnokok.mettol - szemely.szul AS kor
+FROM szemely
+JOIN elnokok ON szemely.szem = elnokok.szem
+WHERE elnokok.mettol - szemely.szul < 50
+ORDER BY szemely.nev;
+-- Eredmény: 27 sor. A legfiatalabbak között Hegedűs András (33),
+--   Esterházy Móric és Friedrich István (36-36).
+--
+-- FIGYELEM, kétértelmű a feladat: Kádár János KÉTSZER is 50 alatt
+-- lépett hivatalba, ezért két sorral szerepel (ettől 27 a sorszám,
+-- nem 26). Ez a szó szerinti olvasat: minden hivatalba lépés külön.
+-- Ha a tanár személyenként EGY sort vár, akkor az első hivatalba
+-- lépés kell:
+--   SELECT szemely.nev, min(elnokok.mettol) - szemely.szul AS kor
+--   FROM szemely JOIN elnokok ON szemely.szem = elnokok.szem
+--   GROUP BY szemely.szem, szemely.nev
+--   HAVING min(elnokok.mettol) - szemely.szul < 50
+--   ORDER BY szemely.nev;
+-- Ez 26 sort ad.

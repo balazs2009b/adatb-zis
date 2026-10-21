@@ -1,0 +1,105 @@
+-- database: nyiltnap.db
+--
+-- EZ A FAJL A RUN GOMBBAL, EGYBEN FUTTATHATO, AKARHANYSZOR.
+-- Csak lekerdezeseket tartalmaz.
+-- A leadando fajlok kulon vannak, a feladat altal kert neven:
+--   2barnamalom.sql  3angol.sql  4matfiz.sql  5telepulesfo.sql
+--   6tantargyak.sql  7angolanna.sql  8majer.sql  9szabad.sql
+--
+-- ============================================================
+-- FONTOS: AZ EREDETI nyiltnap.sql NEM FUTTATHATO!
+-- A kapcsolo tabla utolso FOREIGN KEY sora a zaro zarojel helyett
+-- pontosvesszore vegzodik, es utana meg all egy felesleges zaro
+-- zarojel is. Ket szintaktikai hiba egy helyen, az adatbazis letre
+-- sem jon. A mellette levo JAVITOTT nyiltnap.sql ezt kijavitja;
+-- a tablak szerkezete es az adatok valtozatlanok.
+-- ============================================================
+
+-- ==========================================================
+-- 26. Nyilt nap
+-- ==========================================================
+-- diakok(id, nev, email, telefon, telepules)                262 sor
+-- orak(id, datum, targy, csoport, terem, tanar, ferohely,
+--      orasorszam)                                            60 sor
+-- kapcsolo(id, diakid, oraid)                               487 sor
+--
+-- MEGJEGYZES AZ ADATOKROL: a datum mezo erteke 2028.11-08 alaku,
+-- vagyis PONT es KOTOJEL keveredik benne. A feladatlap mintajaban
+-- 2028-11-28 szerepel, mert az eredeti adatbazisban a datum DATE
+-- tipusu volt. Az SQLite-ban szovegkent van tarolva, az importalt
+-- alakban. Emiatt a 7. feladatnal pontosan '2028.11-10' alakra kell
+-- hivatkozni, nem '2028-11-10'-re.
+
+-- --- 2. feladat -------------------------------------------
+SELECT nev FROM diakok WHERE telepules = 'Barnamalom';
+-- Eredmeny: 33 diak.
+
+-- --- 3. feladat -------------------------------------------
+SELECT datum, terem, orasorszam
+FROM orak
+WHERE targy = 'angol'
+ORDER BY datum, orasorszam;
+-- Eredmeny: 12 angolora.
+
+-- --- 4. feladat -------------------------------------------
+-- A 9. evfolyamos csoportok neve 9-cel kezdodik.
+SELECT csoport, targy, datum
+FROM orak
+WHERE csoport LIKE '9%' AND targy IN ('matematika', 'fizika')
+ORDER BY targy;
+-- Eredmeny: 9 ora (eloszor a fizikak, utana a matematikak).
+
+-- --- 5. feladat -------------------------------------------
+SELECT telepules, count(*) AS diakok
+FROM diakok
+GROUP BY telepules
+ORDER BY diakok DESC;
+-- Eredmeny: 17 telepules. Az elen: Karmaver 38, Barnamalom 33,
+--   Eperkebordo 28, Szurcsolde 26.
+
+-- --- 6. feladat -------------------------------------------
+SELECT DISTINCT targy FROM orak ORDER BY targy;
+-- Eredmeny: 9 tantargy - angol, biologia, digitalis kultura,
+--   fizika, foldrajz, kemia, matematika, nemet, olasz.
+
+-- --- 7. feladat -------------------------------------------
+-- Harom tabla: diak -> kapcsolo -> ora.
+SELECT diakok.nev, diakok.email, diakok.telefon
+FROM diakok
+JOIN kapcsolo ON diakok.id = kapcsolo.diakid
+JOIN orak ON kapcsolo.oraid = orak.id
+WHERE orak.tanar = 'Angol Anna' AND orak.datum = '2028.11-10';
+-- Eredmeny: 9 diak.
+
+-- --- 8. feladat -------------------------------------------
+-- Majer Melinda telepuleset segedlekerdezes adja, o maga kimarad.
+SELECT nev
+FROM diakok
+WHERE telepules = (SELECT telepules FROM diakok WHERE nev = 'Majer Melinda')
+  AND nev <> 'Majer Melinda';
+-- Majer Melinda Bolhaugra telepulesrol van. Eredmeny: 8 diak.
+
+-- --- 9. feladat -------------------------------------------
+-- szabad = ferohely - a regisztraltak szama.
+SELECT orak.datum, orak.orasorszam, orak.targy, orak.tanar,
+       orak.ferohely - count(kapcsolo.id) AS szabad
+FROM orak
+JOIN kapcsolo ON orak.id = kapcsolo.oraid
+GROUP BY orak.id, orak.datum, orak.orasorszam, orak.targy, orak.tanar, orak.ferohely
+HAVING szabad > 0
+ORDER BY szabad DESC;
+-- Eredmeny: 43 ora a 60-bol (15 telt hazas).
+-- A minta harom sora mind szerepel az eredmenyben:
+--   nemet / Nagy Nelli / 13, fizika / Falusi Franciska / 13,
+--   biologia / Kerepesi Karoly / 12.
+-- Az azonos szabad-ertekek kozti sorrend tetszoleges, mert a feladat
+-- csak a szabad szerinti rendezest irja elo.
+--
+-- MIERT BELSO JOIN ES NEM LEFT JOIN?
+-- Ket orara egyaltalan nincs regisztracio (Matematikos Martonne es
+-- Olasz Orsolya oraja, 15-15 ferohellyel). LEFT JOIN eseten ezek is
+-- megjelennenek, 15 szabad hellyel, vagyis a lista elejen - a minta
+-- viszont 13-mal kezdodik. Tehat a varт megoldas a belso JOIN, ami
+-- csak azokat az orakat veszi, amelyekre mar van jelentkezo.
+-- Ellenorizve: belso JOIN -> 43 sor, legnagyobb szabad 13 (egyezik
+-- a mintaval); LEFT JOIN -> 45 sor, legnagyobb szabad 15 (nem egyezik).

@@ -1,0 +1,63 @@
+-- database: nyelviskola.db
+--
+-- EZ A FAJL A RUN GOMBBAL, EGYBEN FUTTATHATO, AKARHANYSZOR.
+-- A beszuras ele torles kerult, kulonben a masodik futtatas
+-- hibat adna. A leadando megoldasok.sql-ben ez NINCS benne.
+
+-- ==========================================================
+-- 23. Nyelviskola - nyelvvizsga-jelentkezesek
+-- ==========================================================
+-- nyelvek(id, nyelv)                          7 + 1 sor
+-- vizsgak(sorsz, idopont, nyelvid, szint)      43 sor
+-- jelentkezesek(sorsz, nev, mobil, szulev, vizsga)  840 sor
+
+-- --- 4. feladat -------------------------------------------
+-- Dobos Zita (9-es sorszam) uj mobilszama.
+-- FONTOS: a SORSZAM alapjan javitunk! A feladat kifejezetten
+-- figyelmeztet, hogy lehetnek azonos nevu jelentkezok, es a nev
+-- szerinti UPDATE ilyenkor tobb embert is atirna.
+UPDATE jelentkezesek SET mobil = '30784613' WHERE sorsz = 9;
+
+SELECT * FROM jelentkezesek WHERE sorsz = 9;
+-- Eredmeny: 9 | Dobos Zita | 30784613 | 1977 | 1
+
+-- --- 5. feladat -------------------------------------------
+DELETE FROM nyelvek WHERE id = 8;
+INSERT INTO nyelvek (id, nyelv) VALUES (8, 'holland');
+
+SELECT * FROM nyelvek;
+-- Eredmeny: angol, nemet, francia, olasz, spanyol, lengyel,
+--           orosz, holland (8 nyelv).
+
+-- --- 6. feladat -------------------------------------------
+-- A 2018-ban betoltott eletkor: 2018 - szuletesi ev.
+SELECT min(2018-szulev) AS legfiatalabb, max(2018-szulev) AS legidosebb
+FROM jelentkezesek;
+-- Eredmeny: legfiatalabb 17, legidosebb 57.
+
+-- --- 7. feladat -------------------------------------------
+-- Telt haz: pontosan 25 jelentkezo (ennyi a maximum).
+-- Ellenorizve: egyetlen vizsgara sincs 25-nel tobb jelentkezo,
+-- tehat a = 25 feltetel helyes.
+-- "a legregebbi idoponttal zaruljon a lista" -> csokkeno rendezes.
+SELECT vizsgak.idopont
+FROM vizsgak
+JOIN jelentkezesek ON vizsgak.sorsz = jelentkezesek.vizsga
+GROUP BY vizsgak.sorsz, vizsgak.idopont
+HAVING count(*) = 25
+ORDER BY vizsgak.idopont DESC;
+-- Eredmeny: 5 idopont, a legkesobbivel kezdve:
+--   2018-03-26 15:00, 2018-03-05 15:00, 2018-02-24 10:00,
+--   2018-02-07 15:00, (+1)
+
+-- --- 8. feladat -------------------------------------------
+-- Nyelvenkent ES szintenkent, ezert ket mezo szerint csoportositunk.
+-- Harom tabla kell: jelentkezes -> vizsga -> nyelv.
+SELECT nyelvek.nyelv, vizsgak.szint, count(*) AS vizsgazo
+FROM jelentkezesek
+JOIN vizsgak ON jelentkezesek.vizsga = vizsgak.sorsz
+JOIN nyelvek ON vizsgak.nyelvid = nyelvek.id
+GROUP BY nyelvek.nyelv, vizsgak.szint
+ORDER BY vizsgazo DESC;
+-- Eredmeny: 9 sor. Az elen:
+--   angol B2 198, nemet B2 181, angol C1 121, nemet C1 116.

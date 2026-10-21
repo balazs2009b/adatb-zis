@@ -1,0 +1,60 @@
+-- database: skills.db
+--
+-- EZ A FÁJL A RUN GOMBBAL, EGYBEN FUTTATHATÓ, AKÁRHÁNYSZOR.
+-- Csak lekérdezéseket tartalmaz. A leadandó fájl a megoldasok.sql.
+
+-- ==========================================================
+-- 21. EuroSkills 2018, Budapest
+-- ==========================================================
+-- szakma(id, szakmaNev)                      37 sor
+-- orszag(id, orszagNev)                      43 sor
+-- versenyzo(id, nev, szakmaId, orszagId, pont)  500 sor
+
+-- --- 3. feladat -------------------------------------------
+-- Hány érmet osztottak ki összesen?
+-- A feladat két csoportot ír le:
+--   a) dobogósok: arany, ezüst, bronz
+--   b) akik lemaradtak a dobogóról, de legalább 700 pontot kaptak
+-- A kulcs a zárójeles megjegyzés: "egyik dobogós sem kapott 700
+-- pontnál kevesebbet". Tehát MINDEN dobogós is 700 felett van.
+-- A két csoport együtt pontosan = mindenki, akinek >= 700 pontja van.
+-- Nem kell a dobogósokat külön megkeresni.
+SELECT count(*) AS ermek
+FROM versenyzo
+WHERE pont >= 700;
+-- Eredmény: 265 - pontosan a feladatlap mintája szerint.
+-- (Ellenőrzés: a >700 feltétel 234-et adna, tehát a >= a helyes.)
+
+-- --- 4. feladat -------------------------------------------
+-- Azok az országok, amelyek INDÍTOTTAK versenyzőt -> JOIN szűr.
+-- Ismétlődések nélkül -> DISTINCT. Ábécé rendben.
+SELECT DISTINCT orszag.orszagNev
+FROM orszag
+JOIN versenyzo ON orszag.id = versenyzo.orszagId
+ORDER BY orszag.orszagNev;
+-- Eredmény: 28 ország a 43-ból. Kezdete a minta szerint:
+--   Ausztria, Belgium, Ciprus, Dánia, Egyesült Királyság, ...
+
+-- --- 5. feladat -------------------------------------------
+SELECT szakma.szakmaNev, count(*) AS versenyzok
+FROM szakma
+JOIN versenyzo ON szakma.id = versenyzo.szakmaId
+GROUP BY szakma.szakmaNev
+ORDER BY versenyzok DESC;
+-- Eredmény: 37 szakma. A legnépesebbek:
+--   Informatikai rendszerüzemeltető 30, Mechatronika 28,
+--   Ruhaipari technikus 24, Szakács 23.
+
+-- --- 6. feladat -------------------------------------------
+-- Három tábla összekapcsolása: versenyző + országa + szakmája.
+SELECT versenyzo.nev, orszag.orszagNev, szakma.szakmaNev, versenyzo.pont
+FROM versenyzo
+JOIN orszag ON versenyzo.orszagId = orszag.id
+JOIN szakma ON versenyzo.szakmaId = szakma.id
+ORDER BY versenyzo.pont DESC, versenyzo.nev
+LIMIT 25;
+-- Eredmény: 25 sor. Az élen:
+--   Daniel Gerber (Svájc, Villanyszerelő) 796
+--   Anastasia Raspopova (Oroszország, Dekoratőr) 771
+--   Aleksandra Valuikina (Oroszország, Grafikus) 769
+--   Andrei Diubanov (Oroszország, Mobil robotika) 768

@@ -1,0 +1,54 @@
+-- database: ostermelo.db
+--
+-- EZ A FAJL A RUN GOMBBAL, EGYBEN FUTTATHATO, AKARHANYSZOR.
+-- Csak lekerdezeseket tartalmaz. A leadando fajl a megoldasok.sql.
+
+-- ==========================================================
+-- 24. Ostermelo - gyumolcsle-kiszallitasok 2016-ban
+-- ==========================================================
+-- gyumolcslevek(id, gynev)                         7 sor
+-- partnerek(id, kontakt, telepules)               44 sor
+-- kiszallitasok(sorsz, gyumleid, partnerid, datum, karton)  1024 sor
+
+-- --- 3. feladat -------------------------------------------
+-- Minden telepules egyszer -> DISTINCT, abc rendben.
+SELECT DISTINCT telepules
+FROM partnerek
+ORDER BY telepules;
+-- Eredmeny: 37 telepules a 44 partnerhez (tehat van, ahol tobb
+-- partner is van). Kezdete: Balatonfured, Budapest, Bekescsaba,
+-- Debrecen, Eger, ...
+
+-- --- 4. feladat -------------------------------------------
+-- Vacon egyetlen partner van, ezert eleg a telepulesre szurni.
+SELECT count(*) AS alkalmak
+FROM kiszallitasok
+JOIN partnerek ON kiszallitasok.partnerid = partnerek.id
+WHERE partnerek.telepules = 'Vác';
+-- Eredmeny: 25 alkalom.
+
+-- --- 5. feladat -------------------------------------------
+-- 2016 majus: a datum szovegkent van tarolva eeee-hh-nn alakban,
+-- ezert a BETWEEN jol mukodik rajta.
+SELECT max(karton) AS legtobb
+FROM kiszallitasok
+WHERE datum BETWEEN '2016-05-01' AND '2016-05-31';
+-- Eredmeny: 16 karton volt a legnagyobb majusi rendeles.
+
+-- --- 6. feladat -------------------------------------------
+-- Csak a telepulesek neve jelenhet meg, darabszam nem.
+SELECT telepules
+FROM partnerek
+GROUP BY telepules
+HAVING count(*) > 1;
+-- Eredmeny: 2 telepules - Budapest es Eger.
+
+-- --- 7. feladat -------------------------------------------
+-- Egy kartonban 6 doboz van, ezert a kartonok osszeget 6-tal szorozzuk.
+SELECT gyumolcslevek.gynev AS ital, sum(kiszallitasok.karton)*6 AS doboz
+FROM kiszallitasok
+JOIN gyumolcslevek ON kiszallitasok.gyumleid = gyumolcslevek.id
+GROUP BY gyumolcslevek.gynev
+ORDER BY doboz DESC
+LIMIT 3;
+-- Eredmeny: bodzale 9114, oszibaracklé 8910, afonyale 8790 doboz.

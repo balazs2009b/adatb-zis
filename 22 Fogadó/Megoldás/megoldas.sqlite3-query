@@ -1,0 +1,88 @@
+-- database: fogado.db
+--
+-- EZ A FÁJL A RUN GOMBBAL, EGYBEN FUTTATHATÓ, AKÁRHÁNYSZOR.
+-- Az index és a beszúrás elé eldobás/törlés került, különben a
+-- második futtatás hibát adna. A leadandó megoldasok.sql-ben ezek
+-- NINCSENEK benne - ott csak az szerepel, amit a feladat kér.
+--
+-- ============================================================
+-- FONTOS: AZ EREDETI tablak.sql NEM FUTTATHATÓ!
+-- A Források/tablak.sql három szintaktikai hibát tartalmaz, és
+-- "near ")": syntax error" hibával elszáll, tehát az adatbázis
+-- létre sem jön. A hibák:
+--   1. szobak: a PRIMARY KEY (szazon) után felesleges VESSZŐ van,
+--      utána már nem jön oszlop, csak a záró zárójel.
+--   2-3. foglalasok: a két FOREIGN KEY sor PONTOSVESSZŐRE végződik
+--      vessző helyett. A pontosvessző lezárná a CREATE TABLE-t.
+-- A mellettük lévő JAVÍTOTT tablak.sql ezeket kijavítja, a táblák
+-- szerkezete változatlan. Az adatok.sql hibátlan.
+-- ============================================================
+
+-- ==========================================================
+-- 22. Fogadó - szobák, vendégek, foglalások
+-- ==========================================================
+-- szobak(szazon, sznev, agy, potagy)            7 sor
+-- vendegek(vsorsz, vnev, irsz)                277 sor
+-- foglalasok(fsorsz, vendeg, szoba, erk, tav, fo)  280 + 1 sor
+
+-- --- 3. feladat -------------------------------------------
+-- A vendegek tábla vnev mezőjének indexelése.
+DROP INDEX IF EXISTS vnev_index;
+CREATE INDEX vnev_index ON vendegek(vnev);
+
+-- --- 4. feladat: nem kell megoldani. ----------------------
+
+-- --- 5. feladat -------------------------------------------
+-- 281-es sorszámú foglalás: a 100-as vendég (Simon Júlia) és
+-- családja, 5 fő, 2-es szoba, 2016.06.28 - 2016.06.30.
+DELETE FROM foglalasok WHERE fsorsz = 281;
+INSERT INTO foglalasok (fsorsz, vendeg, szoba, erk, tav, fo)
+VALUES (281, 100, 2, '2016-06-28', '2016-06-30', 5);
+
+SELECT * FROM foglalasok WHERE fsorsz = 281;
+-- Eredmény: 281 | 100 | 2 | 2016-06-28 | 2016-06-30 | 5
+
+-- --- 6. feladat -------------------------------------------
+UPDATE szobak SET agy = 3 WHERE sznev = 'Vidor';
+
+SELECT * FROM szobak WHERE sznev = 'Vidor';
+-- Eredmény: 6 | Vidor | 3 | 2   (az agy 2-ről 3-ra nőtt)
+
+-- --- 7. feladat -------------------------------------------
+-- Borsod-Abaúj-Zemplén: irányítószám 3400 és 3999 között,
+-- a határokkal együtt -> BETWEEN.
+SELECT count(*) AS vendegszam
+FROM vendegek
+WHERE irsz BETWEEN 3400 AND 3999;
+-- Eredmény: 14 vendég.
+
+-- --- 8. feladat -------------------------------------------
+-- Szobánként hány vendég szállt meg és hány vendégéjszakát töltöttek.
+--   vendegek      = a fő-k összege
+--   vendegejszakak = fő * az ott töltött éjszakák száma, összegezve
+-- Az éjszakák száma a távozás és az érkezés dátumának különbsége.
+-- Az SQLite-ban a dátum szöveg, ezért a julianday() függvény kell
+-- a kivonáshoz; az eredmény lebegőpontos, ezért CAST-tal egészre.
+SELECT szobak.sznev,
+       sum(foglalasok.fo) AS vendegek,
+       CAST(sum(foglalasok.fo * (julianday(foglalasok.tav) - julianday(foglalasok.erk))) AS INTEGER) AS vendegejszakak
+FROM szobak
+JOIN foglalasok ON szobak.szazon = foglalasok.szoba
+GROUP BY szobak.szazon, szobak.sznev
+ORDER BY vendegejszakak, vendegek;
+-- Eredmény: 7 szoba, növekvő vendégéjszaka szerint -
+--   Kuka 46/181, Vidor 132/435, Hapci 174/534, Morgó 176/540,
+--   Tudor 168/569, Szundi 231/703, Szende 203/713
+
+-- --- 9. feladat -------------------------------------------
+-- Visszatérő vendégek: egynél több foglalás.
+SELECT vendegek.vnev, count(*) AS alkalmak
+FROM vendegek
+JOIN foglalasok ON vendegek.vsorsz = foglalasok.vendeg
+GROUP BY vendegek.vsorsz, vendegek.vnev
+HAVING count(*) > 1
+ORDER BY vendegek.vnev;
+-- Eredmény: 4 vendég, mind 2-2 alkalommal -
+--   Budai Réka, Simon Júlia, Vincze Marcell, Váradi Henrik
+-- Simon Júlia azért szerepel, mert az 5. feladatban most vittük be
+-- a második foglalását. A feladat sorrendje ezt így kívánja.

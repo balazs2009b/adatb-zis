@@ -1,0 +1,72 @@
+-- database: orszagok.db
+
+-- ==========================================================
+-- 10. Országok
+-- ==========================================================
+-- Az adatbázis létrehozása a terminálban:
+--     sqlite3 orszagok.db < orszagok.sql
+-- (A tananyagban elírás van: ott "repterek.sql" szerepel.)
+--
+-- Tábla: adatok(allam, forma, terulet, nepesseg, foldresz)  - 88 sor
+-- A nepesseg ezer főben, a terulet km2-ben értendő.
+
+-- --- B/1. feladat -----------------------------------------
+-- A három leghosszabb nevű állam neve és nevének hossza.
+SELECT allam AS Állam, length(allam) AS Hossz
+FROM adatok
+ORDER BY Hossz DESC
+LIMIT 3;
+-- Eredmény: Kongói Demokratikus Köztársaság (31),
+--           Amerikai Egyesült Államok (25), Közép-Afrikai Köztársaság (25)
+-- Megjegyzés: a 2-3. helyen holtverseny van, mindkét név 25 karakter.
+
+-- --- B/2. feladat -----------------------------------------
+-- Azok az államok és államformájuk, amelyekben nem köztársaság van.
+SELECT allam AS Állam, forma AS Államforma
+FROM adatok
+WHERE forma NOT LIKE '%köztársaság%'
+ORDER BY forma, allam;
+-- Eredmény: 13 állam (alkotmányos / örökletes monarchiák, monarchia,
+--           Kanada = szövetségi állam, Nyugat-Szahara = megszállás alatt).
+-- Figyelem: a LIKE '%köztársaság%' kell, mert a "népi köztársaság",
+-- a "népi demokratikus köztársaság" és a "szövetségi köztársaság"
+-- is köztársaság!
+
+-- --- B/3. feladat -----------------------------------------
+-- Hány monarchia van Afrikában?
+SELECT count(*) AS Darab
+FROM adatok
+WHERE foldresz='Afrika' AND forma LIKE '%monarchia%';
+-- Eredmény: 3 (Szváziföld, Marokkó, Lesotho)
+
+-- --- B/4. feladat -----------------------------------------
+-- Hányan élnek köztársaságban?
+SELECT sum(nepesseg) AS Népesség
+FROM adatok
+WHERE forma LIKE '%köztársaság%';
+-- Eredmény: 1 314 631 ezer fő (kb. 1,31 milliárd ember)
+
+-- --- B/5. feladat -----------------------------------------
+-- Mely afrikai országok népessége nagyobb, mint Algériáé?
+SELECT allam AS Állam, nepesseg AS Népesség
+FROM adatok
+WHERE foldresz='Afrika'
+  AND nepesseg > (SELECT nepesseg FROM adatok WHERE allam='Algéria')
+ORDER BY nepesseg DESC;
+-- Eredmény: Nigéria 88 515, Egyiptom 55 163, Etiópia 50 000,
+--           Kongói Demokratikus Köztársaság 36 672,
+--           Dél-Afrikai Köztársaság 34 492   (Algéria: 26 600)
+
+-- --- B/6. feladat -----------------------------------------
+-- Mely amerikai országok területe kisebb, mint Kubáé? (segédlekérdezéssel)
+-- A foldresz mezőben Észak-, Közép- és Dél-Amerika is szerepel,
+-- ezért LIKE '%Amerika%' kell.
+SELECT allam AS Állam, terulet AS Terület
+FROM adatok
+WHERE foldresz LIKE '%Amerika%'
+  AND terulet < (SELECT terulet FROM adatok WHERE allam='Kuba')
+ORDER BY terulet DESC;
+-- Eredmény: 16 ország (Kuba területe 110 860 km2).
+-- Guatemala, Panama, Costa Rica, Dominikai Köztársaság, Haiti,
+-- Guyana, Salvador, Bahama-szigetek, Jamaica, Dominikai Közösség,
+-- Saint Lucia, Antigua és Barbuda, Barbados, Saint Vicent, ...

@@ -1,0 +1,81 @@
+-- database: mindentudas.db
+--
+-- EZ A FAJL A RUN GOMBBAL, EGYBEN FUTTATHATO, AKARHANYSZOR.
+-- Csak lekerdezeseket tartalmaz.
+-- A leadando fajlok kulon vannak, a feladat altal kert neven:
+--   2cimek.sql  3nyelv.sql  4eloszlas.sql  5tobbszor.sql  6vegyes.sql
+
+-- ==========================================================
+-- 25. Mindentudas Egyeteme
+-- ==========================================================
+-- tudos(id, nev, terulet)              161 sor
+-- eloadas(id, cim, ido)                162 sor
+-- kapcsolo(tudosid, eloadasid)         166 sor
+--   A kapcsolo tabla kapcsolja ossze a kettot: egy eloadasnak tobb
+--   eloadoja is lehet, es egy tudos tobbszor is eloadhatott.
+
+-- --- 2. feladat -------------------------------------------
+-- Az ido mezo eeee-hh-nn alaku szoveg, ezert a 2006-os eloadasokat
+-- a LIKE '2006%' valogatja ki.
+SELECT cim, ido
+FROM eloadas
+WHERE ido LIKE '2006%'
+ORDER BY cim;
+-- Eredmeny: 24 eloadas. Kezdete: "A Nap kapujaban" (2006-09-25),
+--   "A membran-tutajoktol a lipidterapiaig..." (2006-11-27), ...
+
+-- --- 3. feladat -------------------------------------------
+-- A "nyelv" szoreszlet barhol lehet a cimben -> %nyelv%
+SELECT tudos.nev, eloadas.cim
+FROM eloadas
+JOIN kapcsolo ON eloadas.id = kapcsolo.eloadasid
+JOIN tudos ON kapcsolo.tudosid = tudos.id
+WHERE eloadas.cim LIKE '%nyelv%';
+-- Eredmeny: 3 eloadas -
+--   Nadasdy Adam: Miert valtozik a nyelv?
+--   Pleh Csaba: Nyelveben gondolkodik-e az ember?
+--   Rona-Tas Andras: Nep es nyelv - A magyarsag kialakulasa
+
+-- --- 4. feladat -------------------------------------------
+SELECT terulet, count(*) AS tudosok
+FROM tudos
+GROUP BY terulet
+ORDER BY tudosok DESC;
+-- Eredmeny: 8 terulet. Az elen a termeszettudomanyok 61 tudossal,
+--   utana bolcsesztudomanyok 32, orvostudomanyok 25,
+--   tarsadalomtudomanyok 20.
+
+-- --- 5. feladat -------------------------------------------
+-- A csoportositas az id-re megy, nem a nevre! A feladat kifejezetten
+-- figyelmeztet, hogy azonos nevu tudosok is vannak - ha csak a nevre
+-- csoportositanank, ket kulonbozo embert vonnank ossze.
+SELECT tudos.nev, count(*) AS alkalmak
+FROM tudos
+JOIN kapcsolo ON tudos.id = kapcsolo.tudosid
+GROUP BY tudos.id, tudos.nev
+HAVING count(*) > 1;
+-- Eredmeny: 5 tudos, mind 2-2 alkalommal - koztuk Kroo Norbert,
+--   Mesko Attila, Pleh Csaba, Szabo Gabor.
+
+-- --- 6. feladat -------------------------------------------
+-- A "Mit tud az emberi agy?" cimu eloadas 2002-10-28-an volt,
+-- tehat a 2002 oktoberi eloadasok kellenek. Az evet es a honapot
+-- segedlekerdezessel hatarozzuk meg, nem beirva.
+SELECT eloadas.cim, tudos.nev, tudos.terulet
+FROM eloadas
+JOIN kapcsolo ON eloadas.id = kapcsolo.eloadasid
+JOIN tudos ON kapcsolo.tudosid = tudos.id
+WHERE substr(eloadas.ido, 1, 7) = (
+    SELECT substr(ido, 1, 7) FROM eloadas WHERE cim = 'Mit tud az emberi agy?'
+);
+-- Eredmeny: 4 eloadas 2002 oktobereben -
+--   Mit tud az emberi agy? (Hamori Jozsef, termeszettudomanyok)
+--   Hol vannak a fizikai tudas hatarai? (Kroo Norbert, termeszettud.)
+--   Muveszettortenet - az emlekezes tudomanya? (Marosi Erno, bolcsesz)
+--   A tortenetiro dilemmaja... (Romsics Ignac, bolcsesztudomanyok)
+-- Latszik a szervezok szandeka: vegyes teruletek egy honapban.
+
+-- --- Megjegyzes az adatbazisrol ---------------------------
+-- A tudos tablaban nehany nev NEM TORHETO SZOKOZT tartalmaz a
+-- vezetek- es keresztnev kozott (pl. "Rona-Tas Andras"). Ez nem
+-- sima szokoz, ezert a nev szerinti pontos keresesnel gondot okozhat.

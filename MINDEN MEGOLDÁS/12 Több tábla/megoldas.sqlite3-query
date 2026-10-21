@@ -1,0 +1,93 @@
+-- database: iskola.db
+--
+-- FIGYELEM: a mellette lévő iskola.db már TARTALMAZZA a végállapotot
+-- (osztalyok 4 sor, diakok 6 sor). Az iskola.sql az EGYSZER lefutó építő
+-- parancsfájl; ha egy már feltöltött adatbázison futtatod, ezt adja:
+--     table osztalyok already exists
+-- Tiszta újraépítéshez előbb: DROP TABLE diakok; DROP TABLE osztalyok;
+--
+-- MEGJEGYZÉS a tananyaghoz: a lecke A. pontja XAMPP-ot, MySQL-t és
+-- PHPMyAdmin-t ír elő, de a mellékelt iskola.sql SQLite-szintaxisú
+-- (TEXT / REAL / INTEGER PRIMARY KEY), és a 13. lecke is kifejezetten
+-- SQLite-ról beszél. Ezért SQLite-ban készült, ahogy az 1-10. lecke.
+
+-- ==========================================================
+-- 12. Táblák összekapcsolása
+-- ==========================================================
+-- Az adatbázis létrehozása a terminálban:
+--     sqlite3 iskola.db < iskola.sql
+
+-- --- B. Két tábla összekapcsolása -------------------------
+
+-- Minden osztályfőnök minden diákkal párba állítva (Descartes-szorzat).
+SELECT osztalyok.osztaly, osztalyok.of, diakok.nev, diakok.osztaly
+FROM osztalyok, diakok;
+-- Eredmény: 24 sor (4 osztály x 6 diák) - a legtöbb értelmetlen.
+
+-- Csak az összetartozó sorok, a kapcsolómezőre szűrve.
+SELECT osztalyok.osztaly, osztalyok.of, diakok.nev, diakok.osztaly
+FROM osztalyok, diakok
+WHERE osztalyok.osztaly=diakok.osztaly;
+-- Eredmény: 6 sor. Kovács Géza (2B) kimarad, mert nincs 2B-s diák.
+
+-- Ugyanaz korszerűbb formában: a kapcsolás a JOIN ... ON-ba kerül.
+SELECT osztalyok.osztaly, osztalyok.of, diakok.nev, diakok.osztaly
+FROM osztalyok
+JOIN diakok ON osztalyok.osztaly=diakok.osztaly;
+-- Eredmény: ugyanaz a 6 sor. A JOIN helyett INNER JOIN is írható.
+
+-- Csak az A osztályok, az osztály egyszer kiíratva.
+SELECT osztalyok.osztaly, osztalyok.of, diakok.nev
+FROM osztalyok
+JOIN diakok ON osztalyok.osztaly=diakok.osztaly
+WHERE osztalyok.osztaly LIKE "_A";
+-- Eredmény: 4 sor (1A: Kiss László, Kádár Judit; 2A: Szabó Sándor, Koltai Judit)
+
+-- LEFT JOIN: a diák nélküli osztályfőnök is megjelenik.
+SELECT osztalyok.osztaly, osztalyok.of, diakok.nev
+FROM osztalyok
+LEFT JOIN diakok ON osztalyok.osztaly=diakok.osztaly;
+-- Eredmény: 7 sor. KÉRDÉS: mi került Kovács Géza neve mellé?
+-- VÁLASZ: NULL (üres érték), mert nincs hozzá tartozó diák.
+
+-- --- C. Tábla összekapcsolása saját magával ---------------
+
+-- Az összes osztálytárs pár (mindenki önmagával is).
+SELECT A.nev, B.nev
+FROM diakok AS A
+JOIN diakok AS B ON A.osztaly=B.osztaly;
+-- Eredmény: 12 sor (3 osztályban 2-2 diák: 3 x 2 x 2).
+
+-- Kik Szabó Sándor osztálytársai?
+SELECT A.nev, B.nev
+FROM diakok AS A
+JOIN diakok AS B ON A.osztaly=B.osztaly
+WHERE A.nev="Szabó Sándor" AND B.nev!="Szabó Sándor";
+-- Eredmény: 1 sor. KÉRDÉS: írd ide a nevét.
+-- VÁLASZ: Koltai Judit
+
+-- --- D. Gyakorlás -----------------------------------------
+
+-- Minden osztályfőnök és a hozzá tartozó tanulók száma (a 0 is).
+SELECT osztalyok.of, count(diakok.nev)
+FROM osztalyok
+LEFT JOIN diakok ON osztalyok.osztaly=diakok.osztaly
+GROUP BY osztalyok.of;
+-- Eredmény: Kovács Edit 2, Kovács Géza 0, Nagy Andrea 2, Tóth Lajos 2
+-- (A count(diakok.nev) a NULL-t nem számolja, ezért lesz Kovács Gézánál 0.
+--  A count(*) itt 1-et adna, mert a LEFT JOIN egy sort ad hozzá.)
+
+-- --- E. Feladat -------------------------------------------
+
+-- A kiegészített parancs: osztályfőnökönként a tanulók átlagának átlaga,
+-- csak azoknál, akikhez tartozik tanuló -> ezért JOIN, nem LEFT JOIN.
+SELECT osztalyok.of, avg(diakok.atlag)
+FROM osztalyok
+JOIN diakok ON osztalyok.osztaly=diakok.osztaly
+GROUP BY osztalyok.of;
+-- Eredmény:  Kovács Edit  2.95
+--            Nagy Andrea  3.965
+--            Tóth Lajos   4.25
+-- Kovács Géza nem jelenik meg, mert nincs tanulója.
+
+-- Ez a parancs a feladat.sql fájlban is megvan (a lecke ezt kéri).

@@ -1,0 +1,82 @@
+-- database: webshop.db
+--
+-- EZ A FAJL A RUN GOMBBAL, EGYBEN FUTTATHATO, AKARHANYSZOR.
+-- Az 5. feladat arcsokkentese elott az arak visszaallnak az eredetire,
+-- kulonben minden futtatas ujra levonna az 5 szazalekot. A leadando
+-- megoldasok.sql-ben ez a visszaallitas NINCS benne.
+
+-- ==========================================================
+-- 33. Webshop - sportklub szurkoloi boltja, 2018. januar
+-- ==========================================================
+-- termekek(id, megnevezes, ar)                      20 sor
+-- vevok(id, nev, iranyitoszam, telepules, utcahazszam)  100 sor
+-- szamlafej(id, szamlaszam, kelt, teljesites, vevoid)   200 sor
+-- szamlatetel(id, szamlafejid, termekid, mennyiseg,
+--             mennyisegiegyseg, bruttoegysegar, afaszazalek)  571 sor
+--   A bruttoegysegar 1 DB termekre vonatkozik, az eladaskori aron.
+--   Ezert a 6. es 8. feladat ebbol szamol, nem a termekek.ar-bol,
+--   es az 5. feladat arvaltozasa nem befolyasolja oket.
+--
+-- MEGJEGYZES a tananyaghoz: a szamlatetel.id mezo
+--     id INTEGER AUTO_INCREMENT PRIMARY key
+-- alakban van definialva. Az AUTO_INCREMENT MySQL-szintaxis, az SQLite
+-- nem ismeri, es mivel igy az oszlop tipusa nem pontosan INTEGER, nem
+-- lesz rowid-helyettes sem: mind az 571 sorban NULL az id. A feladatok
+-- nem hasznaljak, ezert a megoldasokat nem erinti.
+
+-- --- 4. feladat -------------------------------------------
+SELECT megnevezes, ar FROM termekek ORDER BY ar;
+-- Eredmeny: 20 termek. A legolcsobb Sornyito 600 Ft, Kulacs 1200 Ft.
+
+-- --- 5. feladat -------------------------------------------
+-- Minden 5000 Ft-nal dragabb termek ara 5 szazalekkal csokken.
+-- 5 szazalekkal csokkenteni = a 95 szazalekat venni.
+--
+-- Az ujrafuttathatosag miatt elso futtataskor elmentjuk az eredeti
+-- arakat egy segedtablaba, es minden futas elejen visszaallitjuk
+-- oket. E nelkul minden Run ujra levonna az 5 szazalekot, es az arak
+-- hibauzenet nelkul egyre csokkennenek.
+-- A leadando megoldasok.sql-ben ez a ket sor NINCS benne, ott csak
+-- a feladat altal kert UPDATE szerepel.
+CREATE TABLE IF NOT EXISTS termekek_eredeti AS SELECT id, ar FROM termekek;
+UPDATE termekek SET ar = (SELECT ar FROM termekek_eredeti e WHERE e.id = termekek.id);
+
+UPDATE termekek SET ar = ar * 0.95 WHERE ar > 5000;
+
+SELECT megnevezes, ar FROM termekek ORDER BY ar DESC LIMIT 5;
+-- 9 termek ara volt 5000 Ft felett, ezek csokkentek 5 szazalekkal.
+
+-- --- 6. feladat -------------------------------------------
+-- A datum ellenorzesenel a TELJESITES datumat kell alapul venni,
+-- nem a kiallitas keltet. A brutto egysegar 1 db-ra vonatkozik,
+-- ezert szorozni kell a mennyiseggel.
+SELECT sum(szamlatetel.mennyiseg * szamlatetel.bruttoegysegar) AS bevetel
+FROM szamlatetel
+JOIN szamlafej ON szamlatetel.szamlafejid = szamlafej.id
+WHERE szamlafej.teljesites BETWEEN '2018-01-01' AND '2018-01-15';
+-- Eredmeny: 2 691 200 Ft.
+
+-- --- 7. feladat -------------------------------------------
+-- Akik szerepelnek a nyilvantartasban, de nincs szamlajuk.
+-- Az adatbazis csak 2018. januari adatokat tartalmaz (a datumok
+-- 2018-01-01 es 2018-01-31 koze esnek), ezert a "januarban nem
+-- vasarolt" azt jelenti, hogy egyaltalan nincs szamlaja.
+SELECT nev, telepules
+FROM vevok
+WHERE id NOT IN (SELECT vevoid FROM szamlafej)
+ORDER BY nev;
+-- Eredmeny: 12 vevo, pontosan a feladatlap mintaja szerint:
+--   Antal Andrea (Debrecen), Balazs Andrea (Siofok),
+--   Biro Maria (Papa), Feher Sandor (Pecs), ...
+
+-- --- 8. feladat -------------------------------------------
+SELECT termekek.megnevezes, sum(szamlatetel.mennyiseg * szamlatetel.bruttoegysegar) AS bevetel
+FROM szamlatetel
+JOIN termekek ON szamlatetel.termekid = termekek.id
+GROUP BY termekek.id, termekek.megnevezes
+ORDER BY bevetel DESC
+LIMIT 3;
+-- Eredmeny - pontosan a minta szerint:
+--   Hivatalos mez        1 194 000
+--   Szabadido felso        652 500
+--   Vasarlasi utalvany     580 000
