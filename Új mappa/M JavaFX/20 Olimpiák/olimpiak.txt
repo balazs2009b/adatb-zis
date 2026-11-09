@@ -1,0 +1,28 @@
+1896;Athén
+1900;Párizs
+1904;St. Louis
+1908;London
+1912;Stockholm
+1920;Antwerpen
+1924;Párizs
+1928;Amszterdam
+1932;Los Angeles
+1936;Berlin
+1948;London
+1952;Helsinki
+1956;Melbourne
+1960;Róma
+1964;Tokió
+1968;Mexikóváros
+1972;München
+1976;Montreal
+1980;Moszkva
+1984;Los Angeles
+1988;Szöul
+1992;Barcelona
+1996;Atlanta
+2000;Sydney
+2004;Athén
+2008;Peking
+2012;London
+2016;Rio de Janeiro
