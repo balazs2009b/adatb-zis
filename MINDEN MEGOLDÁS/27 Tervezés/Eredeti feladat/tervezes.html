@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="hu">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adatbázis tervezése lépésről lépésre</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --accent: #e74c3c;
+            --bg: #f0f2f5;
+            --vendegek: #d1ecf1;
+            --edzok: #d4edda;
+            --tipusok: #fff3cd;
+            --foglalas: #f8d7da;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--bg);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .slide-container {
+            width: 100%;
+            max-width: 1600px;
+            background: white;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            min-height: 90vh;
+        }
+
+        .slide-content {
+            padding: 30px;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .slide {
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+
+        .active {
+            display: block;
+        }
+
+        h1 {
+            color: var(--primary);
+            border-bottom: 4px solid var(--accent);
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        h2 {
+            color: var(--accent);
+            margin-top: 0;
+        }
+
+        h3 {
+            background: #34495e;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 4px;
+            font-size: 1rem;
+            margin: 15px 0 10px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            background: white;
+        }
+
+        th,
+        td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background: #ececec;
+            font-weight: bold;
+        }
+
+        /* Színkódolt cellák a kapcsolatok jelzésére */
+        .v-id {
+            background: #76c7d6 !important;
+            font-weight: bold;
+            width: 40px;
+            text-align: center;
+        }
+
+        .e-id {
+            background: #8fd19e !important;
+            font-weight: bold;
+            width: 40px;
+            text-align: center;
+        }
+
+        .t-id {
+            background: #e9d180 !important;
+            font-weight: bold;
+            width: 40px;
+            text-align: center;
+        }
+
+        .rel-v {
+            border-left: 8px solid #76c7d6 !important;
+        }
+
+        .rel-e {
+            border-left: 8px solid #8fd19e !important;
+        }
+
+        .rel-t {
+            border-left: 8px solid #e9d180 !important;
+        }
+
+        .nav-btns {
+            padding: 20px;
+            background: #f8f9fa;
+            border-top: 1px solid #ddd;
+            display: flex;
+            justify-content: flex-end;
+            border-radius: 0 0 12px 12px;
+        }
+
+        button {
+            padding: 12px 25px;
+            cursor: pointer;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            margin-left: 10px;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: var(--accent);
+        }
+
+        .info-box {
+            background: #eef2f7;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 5px solid var(--primary);
+            margin: 10px 0;
+        }
+
+        .grid-layout {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="slide-container">
+        <div class="slide-content" id="scroll-area">
+
+            <div class="slide active title-slide">
+                <h1>Edzőtermi nyilvántartás</h1>
+                <h2>Adatbázis-tervezés lépésről lépésre</h2>
+                <p style="font-size: 1.2rem; color: #34495e;">Készítette: Tóth József</p>
+                <p style="margin-top: 50px; font-style: italic;">Kattints a "Következő" gombra a kezdéshez!</p>
+            </div>
+
+            <div class="slide">
+                <h1>0. lépés: Az eredeti tábla</h1>
+                <div class="info-box">Minden adat egyetlen listában. Ha Nagy Ádám száma változik, 2 helyen kell
+                    javítani. Ha a Jóga teremváltást kap, 2 helyen kell javítani... Javítsuk az adatbázist!</div>
+                <table>
+                    <tr>
+                        <th>Vendég neve</th>
+                        <th>Vendég tel.</th>
+                        <th>Edzés</th>
+                        <th>Terem</th>
+                        <th>Edző neve</th>
+                        <th>Edző tel.</th>
+                        <th>Dátum</th>
+                        <th>Fizetve?</th>
+                    </tr>
+                    <tr>
+                        <td>Nagy Ádám</td>
+                        <td>06-20-111</td>
+                        <td>Jóga</td>
+                        <td>1-es</td>
+                        <td>Kiss Éva</td>
+                        <td>06-30-222</td>
+                        <td>03.24</td>
+                        <td>Igen</td>
+                    </tr>
+                    <tr>
+                        <td>Nagy Ádám</td>
+                        <td>06-20-111</td>
+                        <td>Spinning</td>
+                        <td>2-es</td>
+                        <td>Kovács Pál</td>
+                        <td>06-70-333</td>
+                        <td>03.26</td>
+                        <td>Nem</td>
+                    </tr>
+                    <tr>
+                        <td>Szabó Edit</td>
+                        <td>06-30-444</td>
+                        <td>Jóga</td>
+                        <td>1-es</td>
+                        <td>Kiss Éva</td>
+                        <td>06-30-222</td>
+                        <td>03.24</td>
+                        <td>Igen</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="slide">
+                <h1>1. lépés: Vendégek és edzők leválasztása</h1>
+                <div class="info-box">A neveket sorszámokkal (ID) helyettesítjük. A színes oszlopok mutatják a
+                    kapcsolatokat!</div>
+
+                <div class="grid-layout">
+                    <div>
+                        <h3>Vendégek tábla</h3>
+                        <table>
+                            <tr>
+                                <th class="v-id">ID</th>
+                                <th>Név</th>
+                                <th>Telefon</th>
+                            </tr>
+                            <tr>
+                                <td class="v-id">1</td>
+                                <td>Nagy Ádám</td>
+                                <td>06-20-111</td>
+                            </tr>
+                            <tr>
+                                <td class="v-id">2</td>
+                                <td>Szabó Edit</td>
+                                <td>06-30-444</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div>
+                        <h3>Edzők tábla</h3>
+                        <table>
+                            <tr>
+                                <th class="e-id">ID</th>
+                                <th>Név</th>
+                                <th>Telefon</th>
+                            </tr>
+                            <tr>
+                                <td class="e-id">10</td>
+                                <td>Kiss Éva</td>
+                                <td>06-30...</td>
+                            </tr>
+                            <tr>
+                                <td class="e-id">11</td>
+                                <td>Kovács Pál</td>
+                                <td>06-70...</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <h3>Fő tábla (Részlegesen javítva)</h3>
+                <table>
+                    <tr>
+                        <th class="v-id">V_ID</th>
+                        <th>Edzés</th>
+                        <th>Terem</th>
+                        <th class="e-id">E_ID</th>
+                        <th>Dátum</th>
+                        <th>Fizetve?</th>
+                    </tr>
+                    <tr>
+                        <td class="rel-v">1</td>
+                        <td>Jóga</td>
+                        <td>1-es</td>
+                        <td class="rel-e">10</td>
+                        <td>03.24</td>
+                        <td>Igen</td>
+                    </tr>
+                    <tr>
+                        <td class="rel-v">1</td>
+                        <td>Spinning</td>
+                        <td>2-es</td>
+                        <td class="rel-e">11</td>
+                        <td>03.26</td>
+                        <td>Nem</td>
+                    </tr>
+                    <tr>
+                        <td class="rel-v">2</td>
+                        <td>Jóga</td>
+                        <td>1-es</td>
+                        <td class="rel-e">10</td>
+                        <td>03.24</td>
+                        <td>Igen</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="slide">
+                <h1>2. lépés: Edzéstípusok leválasztása</h1>
+                <div class="info-box">Már a "Jóga" és a "Terem" is külön helyre költözött. Már három táblára mutatnak a
+                    sorszámok.</div>
+
+                <div class="grid-layout">
+                    <div style="opacity: 0.6;">
+                        <h3>Vendégek</h3>
+                        <table>
+                            <tr>
+                                <td class="v-id">1</td>
+                                <td>Nagy Ádám</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div style="opacity: 0.6;">
+                        <h3>Edzők</h3>
+                        <table>
+                            <tr>
+                                <td class="e-id">10</td>
+                                <td>Kiss Éva</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div>
+                        <h3>Edzéstípusok tábla</h3>
+                        <table>
+                            <tr>
+                                <th class="t-id">ID</th>
+                                <th>Edzés</th>
+                                <th>Terem</th>
+                            </tr>
+                            <tr>
+                                <td class="t-id">501</td>
+                                <td>Jóga</td>
+                                <td>1-es</td>
+                            </tr>
+                            <tr>
+                                <td class="t-id">502</td>
+                                <td>Spinning</td>
+                                <td>2-es</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <h3>Fő tábla (majdnem kész)</h3>
+                <table>
+                    <tr>
+                        <th class="v-id">V_ID</th>
+                        <th class="t-id">T_ID</th>
+                        <th class="e-id">E_ID</th>
+                        <th>Dátum</th>
+                        <th>Fizetve?</th>
+                    </tr>
+                    <tr>
+                        <td class="rel-v">1</td>
+                        <td class="rel-t">501</td>
+                        <td class="rel-e">10</td>
+                        <td>03.24</td>
+                        <td>Igen</td>
+                    </tr>
+                    <tr>
+                        <td class="rel-v">1</td>
+                        <td class="rel-t">502</td>
+                        <td class="rel-e">11</td>
+                        <td>03.26</td>
+                        <td>Nem</td>
+                    </tr>
+                    <tr>
+                        <td class="rel-v">2</td>
+                        <td class="rel-t">501</td>
+                        <td class="rel-e">10</td>
+                        <td>03.24</td>
+                        <td>Igen</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="slide">
+                <h1>3. lépés: A végeredmény</h1>
+                <div class="info-box">Minden tábla össze van kötve. A Foglalások tábla csak sorszámokat tárol, amik a
+                    forrásokra mutatnak.</div>
+
+                <div class="grid-layout">
+                    <div>
+                        <h3>1. Vendégek</h3>
+                        <table class="t-vendegek">
+                            <tr>
+                                <td class="v-id">1</td>
+                                <td>Nagy Ádám</td>
+                            </tr>
+                            <tr>
+                                <td class="v-id">2</td>
+                                <td>Szabó Edit</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div>
+                        <h3>2. Edzéstípusok</h3>
+                        <table class="t-tipusok">
+                            <tr>
+                                <td class="t-id">501</td>
+                                <td>Jóga (1-es t.)</td>
+                            </tr>
+                            <tr>
+                                <td class="t-id">502</td>
+                                <td>Spinning (2-es t.)</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div>
+                        <h3>3. Edzők</h3>
+                        <table class="t-edzok">
+                            <tr>
+                                <td class="e-id">10</td>
+                                <td>Kiss Éva</td>
+                            </tr>
+                            <tr>
+                                <td class="e-id">11</td>
+                                <td>Kovács Pál</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <h3>4. Kapcsolótábla: Foglalások</h3>
+                <table style="border: 3px solid var(--accent);">
+                    <thead>
+                        <tr>
+                            <th>Fogl_ID</th>
+                            <th>Ki? (V_ID)</th>
+                            <th>Mit? (T_ID)</th>
+                            <th>Kinél? (E_ID)</th>
+                            <th>Dátum</th>
+                            <th>Fizetve?</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>101</td>
+                            <td class="rel-v">1 <small>🔗 Nagy Ádám</small></td>
+                            <td class="rel-t">501 <small>🔗 Jóga</small></td>
+                            <td class="rel-e">10 <small>🔗 Kiss Éva</small></td>
+                            <td>03.24</td>
+                            <td>Igen</td>
+                        </tr>
+                        <tr>
+                            <td>102</td>
+                            <td class="rel-v">1 <small>🔗 Nagy Ádám</small></td>
+                            <td class="rel-t">502 <small>🔗 Spinning</small></td>
+                            <td class="rel-e">11 <small>🔗 Kovács Pál</small></td>
+                            <td>03.26</td>
+                            <td>Nem</td>
+                        </tr>
+                        <tr>
+                            <td>103</td>
+                            <td class="rel-v">2 <small>🔗 Szabó Edit</small></td>
+                            <td class="rel-t">501 <small>🔗 Jóga</small></td>
+                            <td class="rel-e">10 <small>🔗 Kiss Éva</small></td>
+                            <td>03.24</td>
+                            <td>Igen</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p style="margin-top: 20px; text-align: center; font-size: 1.2rem; font-weight: bold;">Így már nincs
+                    ismétlődés az adatbázisban. ✅</p>
+            </div>
+        </div>
+
+        <div class="nav-btns">
+            <button onclick="changeSlide(-1)">⬅️ Előző</button>
+            <button onclick="changeSlide(1)">Következő ➡️</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const scrollArea = document.getElementById('scroll-area');
+
+        function changeSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + n + slides.length) % slides.length;
+            slides[currentSlide].classList.add('active');
+            scrollArea.scrollTop = 0;
+        }
+    </script>
+
+</body>
+
+</html>

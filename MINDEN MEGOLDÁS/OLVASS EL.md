@@ -19,6 +19,28 @@ melyik adatbázissal dolgozzon. Ez **relatív útvonal**, ezért a query fájlna
 egymás után lefuttatva mindegyik hibátlan, és a végállapot minden futtatás
 után ugyanaz.
 
+## Mi van egy lecke mappájában
+
+    <lecke>/
+      <adatbazis>.db            <- a kész, feltöltött adatbázis
+      megoldas.sqlite3-query    <- ezt nyitod meg és futtatod (Run)
+      *.sql                     <- a leadandó megoldásfájlok
+      Eredeti feladat/          <- a tananyag eredeti fájljai
+
+Az **Eredeti feladat** mappában a tanári anyag van, érintetlenül: a feladat
+leírása (`.doc`, `.docx`, `.pdf`, `.ppt`) és az adatbázist létrehozó eredeti
+forrásszkriptek. Bemutatáskor innen tudod felolvasni, mit kért a feladat, és
+mellette megmutatni a megoldást. **Futtatni nem kell** semmit belőle — a `.db`
+már fel van töltve.
+
+Ami szándékosan **nincs** benne: a `*-prompt.txt` fájlok. Azok a saját
+AI-promptjaid, nem a tananyag része, és leadott anyagban nincs helyük.
+
+A **weblapos feladat** nem itt van, hanem a repó gyökerében:
+`Weblap - Fenntarthatóság/fenntarthatosag.html`. Egyetlen önálló fájl, a CSS
+és mind a három kép bele van építve, dupla kattintásra megnyílik bármelyik
+böngészőben, internet nélkül is.
+
 ## A leckék
 
 | Mappa | Adatbázis | Leadandó fájl(ok) |
