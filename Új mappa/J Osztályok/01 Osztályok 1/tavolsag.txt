@@ -1,0 +1,12 @@
+Bécs 243
+Belgrád 379
+Berlin 874
+Bukarest 823
+Kijev 1133
+London 1720
+Párizs 1485
+Pozsony 200
+Prága 525
+Róma 1233
+Szófia 769
+Varsó 874

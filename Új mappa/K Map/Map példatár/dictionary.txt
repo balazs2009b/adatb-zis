@@ -1,0 +1,25 @@
+ant; hangya
+bat; denevér
+camel; teve
+cockroach; csótány
+crab; rák
+deer; szarvas, őz
+duck; kacsa
+eagle; sas
+fly; légy
+fox; róka
+frog; béka
+hamster; hörcsög
+lion; oroszlán
+lobster; homár
+octopus; polip
+peacock; páva
+pig; disznó
+rabbit; nyúl
+seal; fóka
+shark; cápa
+spider; pók
+squirrel; mókus
+tiger; tigris
+whale; bálna
+worm; giliszta, kukac

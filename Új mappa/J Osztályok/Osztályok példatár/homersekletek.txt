@@ -1,0 +1,7 @@
+Bécs 2 6
+Madrid 4 10
+London 2 7
+Róma 11 16
+Athén 12 16
+Oslo 0 4
+Berlin 5 7
